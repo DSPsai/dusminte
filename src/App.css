@@ -1,5 +1,10 @@
 .App {
   text-align: center;
+  font-family: 'SF Pro Display';
+}
+
+.fontcolor {
+  color: #323B4C
 }
 
 .App-logo {
@@ -28,10 +33,31 @@
   color: #61dafb;
 }
 
+.CartPopUp {
+  background-color: rgba(76, 173, 144, 1);
+  padding: 15px;
+  margin: 0 10px;
+  border-radius: 10px;
+  font-size: 18px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+}
+
+.CartPopUthop {
+  position: fixed;
+  bottom: 80px;
+  background-color: white;
+  padding: 10px;
+  width: calc(100% - 20px);
+  z-index: 10;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

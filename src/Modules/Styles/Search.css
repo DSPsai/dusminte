@@ -1,0 +1,112 @@
+.SearchContainer {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 100vh;
+    background-color: white;
+    transition: all 0.5s;
+    z-index: 100;
+    text-align: initial;
+    overflow-y: scroll;
+}
+
+.searchbar {
+    margin: 5px;
+    padding: 5px;
+    margin-left: 0;
+    /* margin-top: 60px; */
+    border: 1.2px solid rgba(0, 0, 0, 0.126);
+    border-radius: 5px;
+    display: flex;
+    width: 100%;
+}
+
+.searchbar i {
+    padding: 10px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: rgba(0, 0, 0, 0.618)
+}
+
+.searchbar input {
+    border: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+.searchbar input:focus-visible {
+    outline: none !important;
+}
+
+.SearchTitle {
+    margin: 10px;
+    margin-bottom: 0px;
+    font-weight: 550;
+    color: #323B4C;
+}
+
+.recentItems hr {
+    border-color: rgba(0, 0, 0, 0.092)
+}
+
+.recentItems {
+    margin: 10px;
+    color: rgba(0, 0, 0, 0.628);
+    /* font-weight: 550; */
+}
+
+.ProductPageTopCardName {
+    color: #323B4C;
+    font-size: 16px;
+}
+
+.SearchCard {
+    /* width: 100px; */
+    text-align: center;
+    padding: 10px;
+}
+
+.SearchCardContainer {
+    display: flex;
+    overflow-x: scroll;
+}
+
+.row {
+    display: flex;
+    flex-flow: row;
+}
+
+.BackButton i {
+    font-size: 20px;
+}
+
+.searchCardImg img {
+    object-fit: fill;
+    border-radius: 10px;
+    width: 70px;
+    height: 70px;
+}
+
+.SearchCardTitle {
+    /* font-weight: 550; */
+    color: #323B4C;
+    text-align: center;
+    font-size: 13.5px;
+    margin-top: 10px;
+}
+
+.backgroundgrey {
+    background-color: rgba(244, 244, 244, 1);
+    height: 20px;
+    width: 100%;
+}
+
+.searchCardImgd {
+    width: 68px;
+    height: 68px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(222, 231, 226, 1);
+    border-radius: 10px;
+}

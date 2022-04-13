@@ -1,0 +1,184 @@
+.Products_Page {
+    /* padding: 20px; */
+    background-color: rgba(232, 232, 232, 0.439);
+    margin-top: 60px;
+    padding-bottom: 100px;
+}
+
+.ProductPageTop {
+    padding-top: 13px;
+    background-color: white;
+    display: flex;
+    overflow-y: scroll;
+    padding-bottom: 13px;
+    margin-bottom: 10px;
+}
+
+.ProductPageTopCard:first-child {
+    margin-left: 13px;
+}
+
+.ProductPageTopCard {
+    margin: 10px 7px;
+    border: 2px solid rgb(228, 244, 239);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.ProductPageTopCard img {
+    width: calc(33vw - 42px);
+    object-fit: contain;
+}
+
+.CommonPC {
+    display: grid;
+    grid-template-columns: 140px auto;
+    text-align: initial;
+    font-size: 15px;
+    line-height: 20px;
+}
+
+.CommonPC img {
+    height: calc(100% - 41px);
+    width: calc(100% - 30px);
+    border: 1.3px solid rgb(228, 244, 239);
+    border-radius: 10px;
+    margin: 10px;
+    object-fit: fill;
+    padding: 10px;
+}
+
+@keyframes anim {
+    from {
+        margin-top: 100vh;
+        height: 0;
+    }
+
+    to {
+        margin-top: 0vh;
+        height: 100vh;
+    }
+}
+
+.anim{
+    animation-name: anim;
+    overflow: hidden;
+    animation-duration: 2s;
+}
+
+.CPCR {
+    padding: 10px;
+    font-size: 16px;
+    line-height: 26px;
+    display: flex;
+    flex-flow: column;
+    margin-left: 10px;
+    color: #323B4C
+}
+
+.Pslider {
+    padding-top: 10px;
+    padding-bottom: 13px;
+}
+
+.CPCR .redtext {
+    font-size: 17px;
+    margin-bottom: -8px;
+}
+
+.CPCR .ProductAdd {
+    font-size: 18px;
+    padding: 5px;
+    padding-left: 22px;
+    padding-right: 22px;
+    margin-left: auto;
+    margin-top: -7px;
+}
+
+.PCBrow {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    padding: 0 !important;
+    display: flex;
+}
+
+.PCBrow span {
+    padding-left: 5px;
+    padding-right: 5px;
+    background-color: white;
+    color: rgba(76, 173, 144, 1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+}
+
+.PCBrow i {
+    padding: 5px;
+}
+
+.PCBrow:active {
+    background-color: rgba(76, 173, 144, 1) !important;
+    color: white !important;
+}
+
+.ProductPageCards {
+    background-color: white;
+}
+
+.ProductPageCards .CommonPC {
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204) !important;
+}
+
+.commonHeading {
+    font-weight: 600;
+    padding: 10px;
+    font-size: 20px;
+    text-align: initial;
+    color: #323B4C
+}
+
+.CommonTop {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 40px auto 20px;
+    margin-bottom: 10px;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    z-index: 9;
+    background-color: white;
+    width: calc(100% - 20px)
+}
+
+.Products_Page .each-slide {
+    padding: 10px;
+    width: calc(100% - 20px)
+}
+
+.PIs2 {
+    display: flex;
+    overflow-x: scroll;
+    padding-top: 10px;
+    margin-bottom: 16px;
+}
+
+.PI2 {
+    padding: 10px;
+    /* background-color: rgba(232, 232, 232, 0.439); */
+    border-radius: 5px;
+    margin: 5px;
+    white-space: nowrap;
+    color: rgba(0, 0, 0, 0.765);
+    border: 1.5px solid rgb(220, 220, 220);
+}
+
+.ProductsPage2 {
+    margin-top: 70px;
+    background-color: rgba(232, 232, 232, 0.439);
+}
+
+.ProductsPage2 .CommonPC {
+    border-bottom: 1px solid rgba(102, 102, 102, 0.09) !important;
+    height: 157px
+}

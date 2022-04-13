@@ -1,0 +1,118 @@
+.CartPage {
+    margin-top: 60px;
+}
+
+.leftright {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.CPTitem .end {
+    text-align: end;
+}
+
+.CPTitem {
+    padding: 10px;
+    background-color: white;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204) !important;
+}
+
+.CPTitemTop {
+    display: grid;
+    grid-template-columns: 100px auto;
+    text-align: initial;
+}
+
+.CPTitem .leftright .PCBrow {
+    margin-top: -10px;
+}
+
+.cartPage {
+    background-color: rgba(232, 232, 232, 0.439);
+    padding-bottom: 20px;
+}
+
+.applycoupon {
+    justify-content: space-between;
+    padding: 10px 20px 10px 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: white;
+}
+
+.applycoupon i:first-child {
+    margin-right: 10px;
+}
+
+.CartAddress {
+    padding: 10px 20px 10px 20px;
+    text-align: initial;
+    background-color: white;
+}
+
+.itemTotal {
+    background-color: white;
+    margin: 10px 0 10px 0;
+    padding: 20px 10px 20px 10px;
+}
+
+.CommonPC {
+    background-color: white;
+}
+
+.cartPage .CommonPC {
+    width: 90vw;
+    min-width: 300px;
+    margin-left: 20px;
+    border-radius: 10px;
+}
+
+.CartRproduct {
+    display: flex;
+    overflow-x: scroll;
+    margin-bottom: 70px;
+}
+
+.EssentialsCardContianer {
+    padding-bottom: 170px !important;
+}
+
+.HelpPage {
+    background-color: rgba(244, 244, 244, 1);
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+.HelpPage .TopHeadP {
+    background-color: white;
+    margin-bottom: 20px;
+}
+
+.Aboutlink {
+    color: rgb(255, 98, 0);
+    font-weight: 600;
+    text-decoration: underline;
+    text-align: initial;
+    padding: 10px;
+    padding-top: 5px;
+    padding-bottom: 0;
+}
+
+.HelpItemCard {
+    background-color: white;
+    margin-bottom: 2px;
+    padding: 12px;
+    padding-top: 17px;
+    padding-bottom: 17px;
+    text-align: initial;
+    color: #323B4C
+}
+
+.HelpItemCard i {
+    margin-left: 15px;
+}
+
+.highlighter12:active {
+    opacity: 0.3;
+}

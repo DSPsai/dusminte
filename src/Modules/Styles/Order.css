@@ -1,0 +1,64 @@
+.OrderCard {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+}
+
+.OrdersContainer {
+    background-color: rgba(244, 244, 244, 1);
+}
+
+.OPC1 {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.OPC1 i {
+    padding: 10px;
+    font-size: 20px;
+    padding-left: 0px;
+}
+
+.OPC1 .OPC11 {
+    text-align: initial;
+    width: 100%;
+}
+
+.OPC12 {
+    white-space: nowrap;
+}
+
+.OPDates {
+    font-size: 14px;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.OPCRows .row {
+    display: flex;
+    font-size: 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    opacity: 0.9;
+    justify-content: space-between;
+}
+
+.PtofileBottomFixed {
+    padding: 20px;
+    width: calc(100% - 40px);
+    background-color: white;
+}
+
+.PtofileBottomFixed .row {
+    padding: 10px;
+    width: calc(100% - 20px);
+    text-align: initial;
+    justify-content: space-between;
+}
+
+.initial {
+    text-align: initial;
+    width: 100%;
+    margin-left: 10px;
+}

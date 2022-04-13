@@ -1,0 +1,341 @@
+.profileNameCard {
+    padding: 20px;
+    text-align: initial;
+    background-color: rgba(244, 244, 244, 1);
+}
+
+.profileMail {
+    color: rgba(0, 0, 0, 0.763);
+    font-size: 14px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.HomeTop .fa-magnifying-glass {
+    font-weight: 550;
+}
+
+.ProfileContainer .S3Right {
+    background-color: rgba(244, 244, 244, 1);
+    padding-right: 20px;
+}
+
+.ProfileCard {
+    display: flex;
+    flex-flow: row;
+    padding: 20px;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204);
+}
+
+.ProfileCard:active {
+    opacity: 0.2
+}
+
+.column {
+    display: flex;
+    flex-flow: column;
+}
+
+.ProfileCardIcon i {
+    font-size: 23px;
+}
+
+.ProfileCardIcon {
+    display: flex;
+    align-items: center;
+
+}
+
+.profileCardName,
+.ProfileCardInfo {
+    text-align: initial;
+    margin-left: 20px;
+}
+
+.profileCardName {
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.ProfileCardInfo {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.ProfileCard .column {
+    width: 100%;
+}
+
+.ProfileCardLast i {
+    font-size: 16px;
+}
+
+.ProfileEditRow:first-child {
+    padding-top: 40px;
+}
+
+.ProfileCardLast .S3Right {
+    font-size: 14px;
+    background-color: white;
+    white-space: nowrap;
+}
+
+.ProfileCardLast {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.PorderIcon {
+    margin: 10px;
+    font-size: 20px;
+}
+
+.POrderContainer {
+    padding: 20px;
+}
+
+.POrderS1,
+.POrderS2 {
+    display: flex;
+    justify-content: space-between;
+    white-space: nowrap;
+    align-items: center;
+}
+
+.PorderID {
+    width: 100%;
+    text-align: initial;
+}
+
+.PorderStatus {
+    opacity: 0.7;
+}
+
+.POrderS2 input[type='range'] {
+    -webkit-appearance: none;
+    background-color: #ddd;
+    height: 10px;
+    overflow: hidden;
+    width: 100%;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.POrderS2 input[type='range']::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    height: 10px;
+}
+
+.POrderS2 input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background: green;
+    border-radius: 50%;
+    box-shadow: -210px 0 0 200px green;
+    cursor: pointer;
+    height: 10px;
+    width: 20px;
+    border: 0;
+}
+
+.POrderS2 input[type='range']::-moz-range-thumb {
+    background: green;
+    border-radius: 50%;
+    box-shadow: -1010px 0 0 1000px #666;
+    cursor: pointer;
+    height: 10px;
+    width: 20px;
+    border: 0;
+}
+
+.POrderS2 input[type="range"]::-moz-range-track {
+    background-color: #ddd;
+}
+
+.POrderS2 input[type="range"]::-moz-range-progress {
+    background-color: #666;
+    height: 20px
+}
+
+.POrderS2 input[type="range"]::-ms-fill-upper {
+    background-color: #ddd;
+}
+
+.POrderS2 input[type="range"]::-ms-fill-lower {
+    background-color: #666;
+}
+
+.POrderS2 .lightText {
+    font-weight: 550;
+    opacity: 0.7;
+}
+
+.POrderItems span:nth-child(2) {
+    margin-top: auto;
+    white-space: nowrap;
+}
+
+.POrderItems span {
+    text-align: initial;
+    line-height: 15px;
+    color: #666
+}
+
+.POrderS2 .span {
+    margin: 5px
+}
+
+.POrderContainer .PorderLast {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+.redtext {
+    color: rgba(255, 0, 0, 0.752);
+    font-weight: 550;
+}
+
+.greentext {
+    color: rgba(0, 128, 0, 0.678);
+    font-weight: 550;
+}
+
+.ProfileOrderShow {
+    padding: 20px;
+    justify-content: space-between;
+    padding-bottom: 0;
+    align-items: center;
+}
+
+.ProfileOrderShow i {
+    font-size: 25px;
+}
+
+.ProfileOrderShow span {
+    width: 100%;
+    margin-left: 10px;
+    font-weight: 550;
+    text-align: initial !important;
+}
+
+.POrderDataContainer {
+    transition: height 1s;
+    overflow: hidden;
+}
+
+.ProfileOrderShow .fa-angle-down {
+    transition: all 1s;
+}
+
+.ProfileInfoContainerTop .row {
+    align-items: center;
+    font-weight: 550;
+    font-size: 20px;
+}
+
+.ProfileEditRow {
+    text-align: initial;
+    padding: 10px 20px;
+}
+
+.ProfileEditRow b {
+    color: #323B4C;
+    font-weight: 500;
+    font-size: 16.5px;
+}
+
+.ProfileInfoContainerData {
+    background-color: rgba(102, 102, 102, 0.067);
+}
+
+.ProfileEditRow input,
+select {
+    padding: 12px;
+    margin-left: -3px;
+    font-size: 14.5px;
+    margin-top: 10px;
+    width: calc(100% - 24px);
+    border-radius: 5px;
+    border: 1px solid rgba(102, 102, 102, 0.267)
+}
+
+.nopaddTop {
+    padding: 10px 20px !important;
+}
+
+.CustomSelect i {
+    font-size: 25px;
+    margin-top: -7px;
+    margin-right: 5px;
+}
+
+.ProfileEditRow input:disabled {
+    background-color: rgba(252, 252, 252, 0.267);
+    /* font-weight: 550; */
+    color: rgba(102, 102, 102, 0.404)
+}
+
+.ProfileEditRow select {
+    width: calc(100% - 20px);
+    background-color: white;
+}
+
+.row .ProfileEditRow select {
+    width: 100%;
+}
+
+.row .ProfileEditRow {
+    width: calc(50% - 50px)
+}
+
+.sBMy {
+    align-items: center;
+    padding: 10px;
+}
+
+.ProfileEditSave {
+    margin-top: 30px;
+    padding: 17px;
+    padding-left: 70px;
+    padding-right: 70px;
+    font-size: 18px;
+}
+
+.CustomSelect {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid rgba(102, 102, 102, 0.267);
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: -3px;
+}
+
+.dropdownpage1 .searchbar {
+    width: calc(100% - 40px);
+    margin: 10px auto;
+}
+
+.dropdownpage1 {
+    padding-top: 15px;
+}
+
+.dropdownitem {
+    text-align: initial;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204);
+}
+
+.Dropdown2Items {
+    text-align: initial;
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204);
+}
+
+.dropdown2 {
+    background-color: rgba(102, 102, 102, 0.204);
+    height: 100vh;
+    overflow-y: scroll;
+}

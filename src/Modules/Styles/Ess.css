@@ -1,0 +1,82 @@
+.HeadText {
+    font-weight: 600;
+    /* opacity: 0.8; */
+    text-align: initial;
+    font-size: 20px;
+    color: #323B4C
+}
+
+.EssCC {
+    background-color: white;
+    overflow: hidden;
+    transition: all 1s;
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-left: -23px;
+    margin-right: -23px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.EssCC .row .HeadText {
+    width: 100%;
+    padding: 10px 0;
+    font-size: 17px;
+    color: #323B4C;
+    padding-left: 5px;
+}
+
+.EssentialsPage {
+    background-color: rgba(232, 232, 232, 0.439);
+}
+
+.EssIC img {
+    width: 100%;
+}
+
+.EssIC {
+    width: calc(33% - 31.9px);
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    font-weight: 550;
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.776);
+    /* background-image: linear-gradient(white, rgba(0, 255, 255, 0.078)); */
+    border: 1.3px solid rgb(228, 244, 239);
+    /* animation-name: example;
+    animation-duration: 1s; */
+    overflow: hidden;
+}
+
+/* width */
+::-webkit-scrollbar {
+    height: 0px;
+}
+
+
+@keyframes example {
+    from {
+        height: 0px
+    }
+
+    to {
+        height: 100px
+    }
+}
+
+.product3 {
+    background-color: white;
+    padding: 0 !important;
+    margin-bottom: 10px !important;
+    /* margin-top: 40px !important; */
+}
+
+.product3PI2 {
+    /* padding:  15px 10px !important; */
+    margin-top: 12px !important;
+    background-color: rgba(0, 0, 0, 0.061);
+    color:#323B4C;
+    margin-bottom: 12px !important;
+}
