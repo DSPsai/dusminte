@@ -60,7 +60,7 @@
     }
 }
 
-.anim{
+.anim {
     animation-name: anim;
     overflow: hidden;
     animation-duration: 2s;
@@ -126,6 +126,7 @@
     background-color: white;
 }
 
+.SearchContainer .CommonPC,
 .ProductPageCards .CommonPC {
     border-bottom: 1px solid rgba(102, 102, 102, 0.204) !important;
 }

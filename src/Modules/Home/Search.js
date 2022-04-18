@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import ProductLongCard from '../CommonComponents/ProductLongCard';
 import '../Styles/Search.css'
 export default function Search(props) {
     const recent = ['cheese', 'milk', 'cheese', 'milk', 'cheese', 'milk',]
@@ -9,6 +11,68 @@ export default function Search(props) {
         }
         return <>{temp}</>
     }
+
+    const searchMe = async (e) => {
+        setLoad(true)
+        let val = e
+        if (val.length > 2)
+            await axios({
+                method: "post",
+                url: `${process.env.REACT_APP_API_URL1}`,
+                data: {
+                    "operation": "productListPublished",
+                    "params": {
+                        "filter": {
+                            "search": val
+                        },
+                        "storeId": "1003"
+                    }
+                },
+                headers: {
+                    'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                    'Accept': 'application/json'
+                },
+            }).then(response => {
+                console.log(response)
+                console.log(value)
+                let temp1 = response.data.data.products;
+                let temp2 = []
+                let tempa = []
+                for (let i of temp1) {
+                    temp2.push(i.description.toLocaleLowerCase().split(value))
+                    console.log(i.description.toLocaleLowerCase().split(value))
+                    tempa.push({
+                        isInCart: false,
+                        img: i.image,
+                        brand: i.brand,
+                        incart: 0,
+                        name: i.name,
+                        quantity: i.unit,
+                        price: i.price
+                    })
+                }
+                setData([...temp2])
+                setTdata(response.data.data.products)
+                setTdata1([...tempa])
+                setTdata([...tempa])
+                setLoad(false)
+                // HomePageByCommunityData = response.data.data[1].tile
+                // return response.data.data[1].tile
+            }).catch(err => {
+                setLoad(false)
+            })
+    }
+    const [value, setValue] = useState("")
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            console.log(value)
+            searchMe(value)
+            setPc(-1)
+        }, 1000)
+        return () => clearTimeout(delayDebounceFn)
+    }, [value])
+
+    const [data, setData] = useState([])
     const searchCards = [
         { img: '/Images/egg.png', name: 'Eggs & Diary' },
         { img: '/Images/bread.png', name: 'Bread & Bakery' },
@@ -50,6 +114,18 @@ export default function Search(props) {
         `, name: 'Home Disinfection'
         }
     ]
+    const [load, setLoad] = useState(false)
+
+    const [pC, setPc] = useState(-1)
+    const [tData, setTdata] = useState([])
+    const [tData1, setTdata1] = useState([])
+    useEffect(() => {
+        let temp = tData1;
+        let temper = temp.splice(pC, 1)
+        temp.splice(0, 0, ...temper)
+        setTdata(temp)
+        console.log(temp)
+    }, [pC])
     return (
         <div
             //  style={{ top: props.bottom }}
@@ -58,47 +134,62 @@ export default function Search(props) {
             <div className="sBMy row">
                 <div className="searchbar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input placeholder='Search for any product or service' />
+                    <input onChange={(e) => setValue(e.target.value)} placeholder='Search for any product or service' />
                 </div>
-                <span style={{marginLeft:'15px',fontSize:'11px'}} onClick={() => document.getElementById('SearchBottom').style.top = '100vh'} className='BackButton'>
+                <span style={{ marginLeft: '15px', fontSize: '11px' }} onClick={() => document.getElementById('SearchBottom').style.top = '100vh'} className='BackButton'>
                     <i class="fa-solid fa-xmark"></i>
                 </span>
             </div>
-            <div className="SearchTitle">
-                Recent Product Searches
-            </div>
-            <div className="recentItems">
-                <Recent />
-            </div>
-            <br/>
-            {/* <div className="backgroundgrey"></div> */}
-            <div className="SearchTitle">
-                Popular Essentials
-            </div>
-            <div className="SearchCardContainer">
-                {searchCards.map(item => {
-                    return <div className="SearchCard">
-                        <div className="searchCardImg">
-                            <img src={item.img} />
+            {/* <div style={{ marginTop: '60px' }} className=""></div> */}
+            {value.length > 0 ? <>
+                {value.length > 2 ? load ? <i class="fa-solid fa-group-arrows-rotate"></i> : <>
+                    <div style={{ marginLeft: '0px', padding: '10px' }} className='profileCardName'>Products</div>
+                    <div className="ProductPageCards">{pC == -1 ? data.map((e, indexer) => {
+                        return <div onClick={() => setPc(indexer)} className='SearchedItem'>{e.map((er, index) => {
+                            return <span >{er}<span className='SearchedItemH'>{index < e.length - 1 ? value : <></>}</span></span>
+                        })}</div>
+                    }) : <>
+                        {tData.map((item, index) => {
+                            return <ProductLongCard Odata={tData} setData={setTdata} index={index} data={item} />
+                        })}
+                    </>}</div></> : <><h3>Enter 3 characters</h3></>}
+            </> : <>
+                <div className="SearchTitle">
+                    Recent Product Searches
+                </div>
+                <div className="recentItems">
+                    <Recent />
+                </div>
+                <br />
+                {/* <div className="backgroundgrey"></div> */}
+                <div className="SearchTitle">
+                    Popular Essentials
+                </div>
+                <div className="SearchCardContainer">
+                    {searchCards.map(item => {
+                        return <div className="SearchCard">
+                            <div className="searchCardImg">
+                                <img src={item.img} />
+                            </div>
+                            <div className="SearchCardTitle">{item.name}</div>
                         </div>
-                        <div className="SearchCardTitle">{item.name}</div>
-                    </div>
-                })}
-            </div>
-            {/* <div className="backgroundgrey"></div> */}
-            <div className="SearchTitle">
-                Popular Services
-            </div>
-            <div className="SearchCardContainer">
-                {services.map(item => {
-                    return <div className="SearchCard">
-                        <div dangerouslySetInnerHTML={{ __html: item.img }} className="searchCardImgd">
+                    })}
+                </div>
+                {/* <div className="backgroundgrey"></div> */}
+                <div className="SearchTitle">
+                    Popular Services
+                </div>
+                <div className="SearchCardContainer">
+                    {services.map(item => {
+                        return <div className="SearchCard">
+                            <div dangerouslySetInnerHTML={{ __html: item.img }} className="searchCardImgd">
+                            </div>
+                            <div className="SearchCardTitle">{item.name}</div>
                         </div>
-                        <div className="SearchCardTitle">{item.name}</div>
-                    </div>
-                })}
-            </div>
-
+                    })}
+                </div>
+            </>
+            }
         </div>
     )
 }

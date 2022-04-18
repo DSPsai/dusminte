@@ -1,22 +1,43 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getCartData } from '../../Apis globals/cartAPI'
 
 export default function CartItems(props) {
     const go = useNavigate()
+    let loca = window.location.href
+    let loc = loca.split('/').pop()
+    let cart = getCartData()
+    let [items, setItems] = useState(cart.totalItems);
+    let [price, setPrice] = useState(cart.totalPrice);
+    // .then(cart => {
+
+    // setItems(cart.totalItems);
+    // setPrice(cart.totalPrice);
     useEffect(() => {
         document.getElementsByClassName('CartPopUthop')[0].style.bottom = 60
+        let cart = getCartData()
+        // .then(cart => {
+        setItems(cart.totalItems);
+        setPrice(cart.totalPrice);
+        // })
     }, [])
-    let loc = window.location.href.split('/').pop()
+    // useLayoutEffect(() => {
+    //     console.log('hiiiiiiiiiiiiiiiiiiiiiii')
+    //     setItems(cart.totalItems);
+    //     setPrice(cart.totalPrice);
+
+    // }, [])
+
     return (
-        <>{props.items > 0 ? <div style={{ bottom: loc == 'MyCart' || loc == 'Products' || loc == 'Recommendations' || loc == 'Popular%20in%20your%20society' || loc == 'SingleProducts' ? 0 : 65 }} onClick={() => go('/MyCart')} className="CartPopUthop"><div className='CartPopUp'>
+        <><div style={{ zIndex: props.items > 0 ? 10 : -1, opacity: props.items > 0 ? 1 : 0, bottom: loc == 'MyCart' || loc == 'Products' || loc == 'Recommendations' || loca.search(/SingleProducts/) >= 0 || loc == 'SingleProducts' ? 0 : 65 }} onClick={() => go('/MyCart')} className="CartPopUthop"><div className='CartPopUp'>
             <div className="CartPopUpleft">
-                {props.items} Items | <i class="fa-solid fa-indian-rupee-sign"></i> {props.price}
+                <span id="cartItemNumber">{props.items}</span> Items | <i class="fa-solid fa-indian-rupee-sign"></i> <span id="cartItemPrice">{props.price}</span>
             </div>
             <div className="CartPopUpright">
                 <span> Select Payment</span> <i class="fa-solid fa-cart-shopping"></i>
             </div>
         </div>
-        </div> : <></>}
+        </div>
         </>
     )
 }

@@ -6,45 +6,122 @@ import Bottom from '../Bottom'
 import Search from './Search';
 import { useHistory, useNavigate } from "react-router-dom";
 import axios from 'axios';
-export default function Home() {
+import { getBanner, getHomePageData, getMasterBanner, RecommendedCall } from '../../Apis globals/HomepageApi';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { getCartData, setCartData } from '../../Apis globals/cartAPI';
+export default function Home(props) {
   let name = 'afstst'
-  const images = [
+  const [images, setImages] = useState([
     { url: "https://rukminim1.flixcart.com/flap/750/350/image/34da8c2d1bec1851.jpg?q=20" },
     { url: "https://rukminim1.flixcart.com/flap/750/350/image/208c836282c59f1e.jpeg?q=20" },
-  ];
+  ]);
   const HomeSection2Card = (data) => {
-    return <div onClick={() => go(`/${data.goto}`)} style={{ backgroundImage: `url('${data.img}')` }} className="HomeS2Card">
+    return <div onClick={() => data.name == 'Grocery' ? go('/Groceries') : go(`/Products/${data.name}`)} style={{ backgroundImage: `url('${data.img}')` }} className="HomeS2Card">
       <span>{data.name}</span>
     </div>
   }
   const go = useNavigate()
   const S3bottomCard = (data) => {
     const addToCart = () => {
-      let temp = dat;
+      let temp = data.Odata;
       temp[data.index].isInCart = true;
       temp[data.index].incart = 1
-      setDat([...temp])
+      let e = getCartData()
+      let another = data.data.id.toString()
+      // let temper = {}
+      // temper = 
+      e[another] = { name: data.data.id.toString(), price: data.data.price, quantity: 1 }
+      console.log(e, Object.keys(e).length)
+      e.totalItems = Object.keys(e).length - 2
+      if (e.totalItems <= 1) {
+        e.totalItems = 1
+      }
+      let total = 0
+      for (let i in e) {
+        try {
+          if (e[i].price != undefined || e[i].price != null)
+            total = (e[i].price * e[i].quantity) + total
+          console.log(i)
+        } catch (e) {
+          console.log(e)
+        }
+      }
+      e.totalPrice = total
+      props.setItems(e.totalItems)
+      props.setPrice(total)
+      setCartData(e)
+      data.setData([...temp])
+      console.log({ ...e }.length)
+      // document.getElementById('cartItemNumber').innerText = e.length
+      // document.getElementsByClassName("CartPopUthop")[0].style.opacity = 1
+      // document.getElementsByClassName("CartPopUthop")[0].style.zIndex = 10
     }
-    function change(bol) {
-      let temp = dat;
-      if (!temp[data.index].isInCart)
-        temp[data.index].isInCart = true
-      if (!bol && temp[data.index].incart == 1) {
+    const change = (sum) => {
+      let temp = data.Odata;
+      let cart = getCartData()
+      if (!sum && temp[data.index].incart == 1) {
         temp[data.index].incart = 0;
         temp[data.index].isInCart = false
+        cart.totalItems = cart.totalItems - 1
+        delete cart[data.data.id.toString()];
+        let total = 0
+        for (let i in cart) {
+          try {
+            if (cart[i].price != undefined || cart[i].price != null)
+              total = (cart[i].price * cart[i].quantity) + total
+            console.log(i)
+          } catch (e) {
+            console.log(e)
+          }
+        }
+        cart.totalPrice = total
+        console.log(cart)
+        props.setItems(cart.totalItems)
+        props.setPrice(total)
+        setCartData(cart)
       } else {
-        temp[data.index].incart = bol ? temp[data.index].incart + 1 : temp[data.index].incart - 1
+        if (sum) {
+          temp[data.index].incart = temp[data.index].incart + 1;
+          cart["" + data.data.id].quantity += 1
+        } else {
+          temp[data.index].incart = temp[data.index].incart - 1
+          cart["" + data.data.id].quantity -= 1
+        }
+        // document.getElementById('cartItemNumber').innerText = cart.length
+        cart.totalItems = Object.keys(cart).length - 2
+        let total = 0
+        for (let i in cart) {
+          try {
+            if (cart[i].price != undefined || cart[i].price != null)
+              total = (cart[i].price * cart[i].quantity) + total
+            console.log(i)
+          } catch (e) {
+            console.log(e)
+          }
+        }
+        cart.totalPrice = total
+        props.setItems(cart.totalItems)
+        props.setPrice(total)
+        setCartData(cart)
+        console.log(cart)
+        // temp[props.index].incart = sum ? temp[props.index].incart + 1 : temp[props.index].incart - 1
       }
-      setDat([...temp])
+      data.setData([...temp])
     }
+    // let masterCart = getCartData()
 
     return <div className="ProductCard">
-      <div style={{ opacity: data.data.off ? 1 : 0 }} className="PCoff">{data.data.off} OFF</div>
-      <img src={data.data.src} />
+      <div style={{ opacity: data.data.off ? 1 : 0 }} className="PCoff"><i style={{ fontSize: '10px' }} class="fa-solid fa-indian-rupee-sign"></i> {data.data.off} OFF</div>
+      {/* <img src={data.data.img} /> */}
+      <PhotoProvider>
+        <PhotoView src={data.data.img} >
+          <img src={data.data.img} alt="" />
+        </PhotoView>
+      </PhotoProvider>
       <div className="crtText lightText">{data.data.brand}</div>
       <span style={{ whiteSpace: 'normal', color: 'rgba(50, 59, 76, 1)' }}>{data.data.name}</span>
       <div style={{ marginTop: 'auto' }} className="crtText lightText">{data.data.capacity}</div>
-      <div className="Price"><i class="fa-solid fa-indian-rupee-sign"></i> {data.data.price}
+      <div className="Price"><i class="fa-solid fa-indian-rupee-sign"></i> {data.data.aprice}
         <span style={{ color: '#5F5F5F', fontSize: '12px' }}>&ensp;<s>{data.data.price}</s></span>
       </div>
       {
@@ -70,58 +147,161 @@ export default function Home() {
     { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '80%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
     { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '90%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
   ])
+  const [rec, serRec] = useState([])
+  const [pop, serPop] = useState([])
+  const [sale, serSale] = useState([])
+  let masterCart = getCartData()
   let history = useNavigate();
   const [search, setSearch] = useState('100vh')
   const [data, setData] = useState('')
   async function call() {
-    await axios({
-      method: "post",
-      url: `${process.env.REACT_APP_API_URL1}`,
-      data: {
-        "operation": "homepageSectionTile"
-      },
-      headers: {
-        'Authentication': `Bearer ${localStorage.getItem('access')}`,
-        'Accept': 'application/json'
-      },
-    }).then(async response => {
-      console.log(response)
-      setData(response)
-      if (response.data.data == null) {
-        await axios({
-          method: "post",
-          url: `${process.env.REACT_APP_API_URL1}`,
-          data: {
-            "operation": "userLoginAdmin",
-            "params":
-            {
-              "email": "admin@dusminute.com",
-              "password": "aDm1n@nk202!",
-              "deviceToken": ""
-            }
-          },
-        }).then(async response => {
-          console.log(response)
-          localStorage.setItem("access", response.data.data.token)
-          await axios({
-            method: "post",
-            url: `${process.env.REACT_APP_API_URL1}`,
-            data: {
-              "operation": "homepageSectionTile"
-            },
-            headers: {
-              'Authentication': `Bearer ${response.data.data.token}`,
-              'Accept': 'application/json'
-            },
-          }).then(response => {
-            console.log(response)
-          }).catch(err => { })
-        }).catch(err => {
+    async function callAuth() {
+      return await axios({
+        method: "post",
+        url: `${process.env.REACT_APP_API_URL1}`,
+        data: {
+          "operation": "userLoginAdmin",
+          "params":
+          {
+            "email": "admin@dusminute.com",
+            "password": "aDm1n@nk202!",
+            "deviceToken": ""
+          }
+        },
+      }).then(async response => {
+        localStorage.setItem("access", response.data.data.token)
+        localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
 
+      }).catch(e => { })
+    }
+    await getHomePageData().then(async easd => {
+      if (easd == null) {
+        callAuth().then(() => {
+          getHomePageData().then(async ea => {
+            setCate([...ea])
+          })
+        })
+      } else {
+        setCate([...easd])
+      }
+    }
+    );
+    RecommendedCall("rec").then(e => {
+      let temp = []
+      for (let i of e) {
+        temp.push({
+          isInCart: masterCart[i._id] != undefined ? true : false,
+          img: i.image,
+          brand: i.brand,
+          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+          name: i.name,
+          quantity: i.unit,
+          price: i.price,
+          off: i.priceDiscount,
+          aprice: i.priceDiscounted,
+          id: i._id
         })
       }
-    }).catch(async err => {
+      serRec([...temp])
     })
+    RecommendedCall("pop").then(e => {
+      let temp = []
+      for (let i of e) {
+        temp.push({
+          isInCart: masterCart[i._id] != undefined ? true : false,
+          img: i.image,
+          brand: i.brand,
+          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+          name: i.name,
+          quantity: i.unit,
+          price: i.price,
+          off: i.priceDiscount,
+          aprice: i.priceDiscounted,
+          id: i._id
+        })
+      }
+      serPop([...temp])
+    })
+    RecommendedCall("sale").then(e => {
+      let temp = []
+      for (let i of e) {
+        temp.push({
+          isInCart: masterCart[i._id] != undefined ? true : false,
+          img: i.image,
+          brand: i.brand,
+          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+          name: i.name,
+          quantity: i.unit,
+          price: i.price,
+          off: i.priceDiscount,
+          aprice: i.priceDiscounted,
+          id: i._id
+        })
+      }
+      serSale([...temp])
+    })
+    getBanner().then(e => {
+      // console.log(e)
+      let temp = []
+      for (let i of e) {
+        temp.push({ url: i.image })
+      }
+      setImages(temp)
+    })
+    // await axios({
+    //   method: "post",
+    //   url: `${process.env.REACT_APP_API_URL1}`,
+    //   data: {
+    //     "operation": "homepageSectionTile"
+    //   },
+    //   headers: {
+    //     'Authentication': `Bearer ${localStorage.getItem('access')}`,
+    //     'Accept': 'application/json'
+    //   },
+    // }).then(async response => {
+    //   console.log(response)
+    //   if (response.data.data == null) {
+    //     await axios({
+    //       method: "post",
+    //       url: `${process.env.REACT_APP_API_URL1}`,
+    //       data: {
+    //         "operation": "userLoginAdmin",
+    //         "params":
+    //         {
+    //           "email": "admin@dusminute.com",
+    //           "password": "aDm1n@nk202!",
+    //           "deviceToken": ""
+    //         }
+    //       },
+    //     }).then(async response => {
+    //       console.log(response)
+    //       localStorage.setItem("access", response.data.data.token)
+    //       await axios({
+    //         method: "post",
+    //         url: `${process.env.REACT_APP_API_URL1}`,
+    //         data: {
+    //           "operation": "homeSectionByCommunityCityId",
+    //           "params": {
+    //             "cityId": 1,
+    //             "communityId": 1004
+    //           }
+    //         },
+    //         headers: {
+    //           'Authentication': `Bearer ${response.data.data.token}`,
+    //           'Accept': 'application/json'
+    //         },
+    //       }).then(response => {
+    //         // HomePageByCommunity().then(e => { setData(e); console.log(e) })
+    //         setCate([...response.data.data[1].tile])
+    //       }).catch(err => { })
+    //     }).catch(err => {
+
+    //     })
+    //   } else {
+    //     setCate([...response.data.data[1].tile])
+    //   }
+    // }).catch(err => {
+    // })
   }
   useEffect(() => {
     document.getElementsByClassName('CartPopUthop')[0].style.display = 'block'
@@ -129,8 +309,9 @@ export default function Home() {
     // await axios.post('http://13.232.100.48:8000', {
     //   "operation": "homepageSectionTile"
     // });
-    // call()
+    call()
   }, [])
+  const [cate, setCate] = useState([])
   return (
     <div className="HomeBap">
       <div className='HomeTop'>
@@ -165,10 +346,13 @@ export default function Home() {
         <div style={{ color: 'rgb(54 134 99)', fontSize: '18px', marginTop: '10px', marginBottom: '10px', fontWeight: '600' }} className="">GET ESSENTIALS HOME DELIVERED</div>
         <hr />
         <div className="HomeS2container">
-          <HomeSection2Card goto='Products' name='Fruits & Vegitables' img='Images/veggis.png' />
+          {cate.map(item => {
+            return <HomeSection2Card goto={item.title == 'Grocery' ? 'Groceries' : 'Products'} name={item.title} img={item.bgImg} />
+          })}
+          {/* <HomeSection2Card goto='Products' name='Fruits & Vegitables' img='Images/veggis.png' />
           <HomeSection2Card goto='Groceries' name='Grocery' img='Images/grocery.png' />
           <HomeSection2Card goto='Products' name='Personal care' img='Images/personal.png' />
-          <HomeSection2Card goto='Products' name='Cleaning and household' img='Images/clean.png' />
+          <HomeSection2Card goto='Products' name='Cleaning and household' img='Images/clean.png' /> */}
         </div>
       </div>
       <div className="HomeSection3container">
@@ -179,12 +363,12 @@ export default function Home() {
           </div>
         </div>
         <div className="S3Bottom">
-          {dat.map((item, index) => {
-            return <S3bottomCard index={index} data={item} />
+          {rec.map((item, index) => {
+            return <S3bottomCard Odata={rec} setData={serRec} index={index} data={item} />
           })}
         </div>
       </div>
-      <div style={{ paddingBottom: '100px' }} className="HomeSection3container">
+      <div className="HomeSection3container">
         <div className="S3Top">
           <span style={{ fontWeight: '550', color: '#323B4C', fontSize: '20px' }}> Popular in your society </span>
           <div className="S3Right" onClick={() => go('/Product3/Popular in your society')}>
@@ -192,8 +376,21 @@ export default function Home() {
           </div>
         </div>
         <div className="S3Bottom">
-          {dat.map((item, index) => {
-            return <S3bottomCard index={index} data={item} />
+          {pop.map((item, index) => {
+            return <S3bottomCard Odata={pop} setData={serPop} index={index} data={item} />
+          })}
+        </div>
+      </div>
+      <div style={{ paddingBottom: '100px' }} className="HomeSection3container">
+        <div className="S3Top">
+          <span style={{ fontWeight: '550', color: '#323B4C', fontSize: '20px' }}> Sale </span>
+          <div className="S3Right" onClick={() => go('/Product3/Popular in your society')}>
+            View all &ensp;<i class="fa-solid fa-angle-right"></i>
+          </div>
+        </div>
+        <div className="S3Bottom">
+          {sale.map((item, index) => {
+            return <S3bottomCard Odata={sale} setData={serSale} index={index} data={item} />
           })}
         </div>
       </div>

@@ -1,48 +1,41 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import axios from 'axios'
 export default function Faq() {
     const go = useNavigate()
+    const apiCall = async () => {
+        await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "faqList"
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            let temp = []
+            for (let i of response.data.data) {
+                temp.push({
+                    c: true,
+                    q: i.question,
+                    a: i.answer
+                })
+            }
+            setData([...temp])
+        }).catch(err => {
+        })
+    }
     useEffect(() => {
-        document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
+        document.getElementsByClassName('CartPopUthop')[0].style.display = 'none';
+        apiCall()
     }, [])
     const [data, setData] = useState([
         {
             c: true,
             q: 'When will i recieve my order?',
             a: 'Any order placed before 7pm is delivered the same day within 1 hour. Orders placed after 7pm are delivered the next day before 10 am.'
-        }, {
-            c: true,
-            q: 'Why items are shown available in app but not available in store?',
-            a: 'As we are working in omni-channel i.e., people can order through app as well as can reach directly to buy the products. So sometime the ordered products. So sometime the ordered products gets sold before your products are billed. But our team is working to reduce this issue.'
-        }, {
-            c: true,
-            q: 'Is there any minimum order value?',
-            a: 'Yes, Rs.50 is the minimum order value'
-        }, {
-            c: true,
-            q: 'When will I get my refund?',
-            a: `As soom as we recieved refund request our team process the refund on the same day but it generally takes 2-3 business days for refund to reach the customer's bank account. You will also recieve message or mail regarding the same.`
-        }, {
-            c: true,
-            q: 'What is the time frame for ordering through app?',
-            a: 'Although our stores are operational from 6:30am to 9pm in evening but our home delivery timings are 9am to 7pm'
-        }, {
-            c: true,
-            q: 'I have some suggestion/ other issue where should I contact?',
-            a: 'For any suggestion and other issue, you can click on contact us button in the app and can connect with our team either through call, email or message. In case of message or email our team will contact you within 15-30 minutes and will help you with your issue.'
-        }, {
-            c: true,
-            q: 'Is there any minimum order value?',
-            a: 'Yes, Rs.50 is the minimum order value'
-        }, {
-            c: true,
-            q: 'Is there any minimum order value?',
-            a: 'Yes, Rs.50 is the minimum order value'
-        }, {
-            c: true,
-            q: 'Is there any minimum order value?',
-            a: 'Yes, Rs.50 is the minimum order value'
         },
     ])
 

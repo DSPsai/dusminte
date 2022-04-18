@@ -5,120 +5,70 @@ import 'react-slideshow-image/dist/styles.css'
 import { Slide } from 'react-slideshow-image';
 import Search from '../Home/Search';
 import '../Styles/Ess.css'
+import { getGrocery } from '../../Apis globals/GroceryApi';
+import { getSingleBanner } from '../../Apis globals/HomepageApi';
 export default function Essentials() {
     const [search, setSearch] = useState('-100vh')
     let history = useNavigate();
-    const images = [
+    const [images, setImages] = useState([
         { url: "https://rukminim1.flixcart.com/flap/750/350/image/34da8c2d1bec1851.jpg?q=20" },
         { url: "https://rukminim1.flixcart.com/flap/750/350/image/208c836282c59f1e.jpeg?q=20" },
-    ];
-    const [data, setData] = useState([
-        {
-            name: 'Foodgrains, Oil & Dry Fruits',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-        {
-            name: 'Masalas & More',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-        {
-            name: 'Munching Snacks',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-        {
-            name: 'Instant Foods',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-        {
-            name: 'Foodgrains, Oil & Dry Fruits',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-        {
-            name: 'Foodgrains, Oil & Dry Fruits',
-            data: [
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-                { name: 'Atta, flours & soup', img: '/Images/grocery.png' },
-            ],
-            expand: false
-        },
-
-    ])
+    ]);
+    const [data, setData] = useState([])
     const EssInnerC = (item) => {
-        return <div onClick={() => history('/SingleProducts')} style={{ animationName: item.expand ? 'example' : '', animationDuration: '1s' }} className="EssIC">
+        return <div onClick={() => {
+            history(`/SingleProducts/${item.data.name.replaceAll("/", ".").replaceAll(" ", "-")}`);
+            localStorage.setItem('labels', JSON.stringify(data[item.index].data.map(e => { return e.name })))
+        }}
+            // style={{ animationName: item.expand ? 'example' : '', animationDuration: '1s' }} 
+            className="EssIC">
             <img src={item.data.img}></img><br />
-            {item.data.name}
+            <div className="EssIcName">{item.data.name}</div>
         </div>
     }
+    async function call() {
+        getGrocery().then(e => {
+            let temp1 = [];
+            for (let i of e) {
+                let temp2 = []
+                for (let j of i.subCategories) {
+                    let temp3 = { name: j.name.toLowerCase(), img: j.image }
+                    temp2.push(temp3)
+                }
+                temp1.push({ name: i.category.name, data: temp2, expand: false })
+            }
+            setData([...temp1])
+            console.log(temp1)
+        })
+    }
     useEffect(() => {
-      document.getElementsByClassName('CartPopUthop')[0].style.display = 'block'
-      document.getElementsByClassName('CartPopUthop')[0].style.bottom = 60;
-      // await axios.post('http://13.232.100.48:8000', {
-      //   "operation": "homepageSectionTile"
-      // });
-      // call()
+        document.getElementsByClassName('CartPopUthop')[0].style.display = 'block'
+        document.getElementsByClassName('CartPopUthop')[0].style.bottom = 60;
+        call()
+        getSingleBanner("FOODGRAINS").then(e => {
+            console.log(e)
+            setImages([...e])
+        })
     }, [])
     const [currentClick, setCurrentClick] = useState(0)
     const EssentialsCC = (dat) => {
         return <div style={{ height: dat.data.expand ? 'auto' : '33px' }} className="EssCC">
-            <div className="row">
+            <div onClick={(e) => {
+                let temp = data;
+                // if (temp[dat.index].expand)
+                //     e.target.style.transform = 'rotate(0deg)';
+                // else
+                //     e.target.style.transform = 'rotate(180deg)';
+                setCurrentClick(dat.index)
+                temp[dat.index].expand = !temp[dat.index].expand
+                console.log(temp[dat.index].expand)
+                setData([...temp])
+            }} className="row">
                 <div className="HeadText">{dat.data.name}</div>
-                <i style={{ display: 'flex', alignItems: 'center' }} onClick={(e) => {
-                    let temp = data;
-                    if (temp[dat.index].expand)
-                        e.target.style.transform = 'rotate(0deg)';
-                    else
-                        e.target.style.transform = 'rotate(180deg)';
-                    setCurrentClick(dat.index)
-                    temp[dat.index].expand = !temp[dat.index].expand
-                    setData([...temp])
-                }} class="fa-solid fa-angle-down"></i>
+                <i style={{ display: 'flex', alignItems: 'center', transform: !data[dat.index].expand ? 'rotate(0deg)' : 'rotate(180deg)' }} class="fa-solid fa-angle-down"></i>
             </div>
-            {dat.data.data.map(item => {
-                return <EssInnerC data={item} expand={currentClick == dat.index ? dat.data.expand : false} />
+            {dat.data.data.map((item, indexer) => {
+                return <EssInnerC index={dat.index} data={item} expand={currentClick == dat.index ? dat.data.expand : false} />
             })}
         </div>
     }

@@ -62,7 +62,7 @@
 }
 
 .cartPage .CommonPC {
-    width: 90vw;
+    width: auto;
     min-width: 300px;
     margin-left: 20px;
     border-radius: 10px;
@@ -115,4 +115,19 @@
 
 .highlighter12:active {
     opacity: 0.3;
+}
+
+.CPCRName {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.CartRproduct .CPCR {
+    overflow: hidden;
+}
+
+.CartRproduct img {
+    height: 150px !important
 }

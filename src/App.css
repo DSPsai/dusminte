@@ -7,6 +7,45 @@
   color: #323B4C
 }
 
+.SearchedItemH {
+  color: #FA9334;
+}
+
+.SearchedItem {
+  padding: 10px;
+  color: #323B4C;
+  border-bottom: 1px solid rgba(102, 102, 102, 0.204)
+}
+
+.fa-group-arrows-rotate {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 23vw;
+  animation: mymove 1s infinite;
+}
+
+@keyframes mymove {
+  from {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+#Transition {
+  height: 100vh;
+  width: 100vw;
+  background-color: white;
+  z-index: 999;
+  position: fixed;
+  top: 0;
+  transition: all 1s;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

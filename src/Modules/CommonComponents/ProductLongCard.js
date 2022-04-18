@@ -1,32 +1,110 @@
 import React from 'react'
 
+import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { getCartData, setCartData } from '../../Apis globals/cartAPI';
 export default function ProductLongCard(props) {
     const addToCart = () => {
         let temp = props.Odata;
         temp[props.index].isInCart = true;
         temp[props.index].incart = 1
+        let e = getCartData()
+        let another = props.data.id.toString()
+        // let temper = {}
+        // temper = 
+        e[another] = { name: props.data.id.toString(), price: props.data.price, quantity: 1 }
+        console.log(e, Object.keys(e).length)
+        e.totalItems = Object.keys(e).length - 2
+        if (e.totalItems <= 1) {
+            e.totalItems = 1
+        }
+        let total = 0
+        for (let i in e) {
+            try {
+                if (e[i].price != undefined || e[i].price != null)
+                    total = (e[i].price * e[i].quantity) + total
+                console.log(i)
+            } catch (e) {
+                console.log(e)
+            }
+        }
+        e.totalPrice = total
+        props.setItems(e.totalItems)
+        props.setPrice(total)
+        setCartData(e)
         props.setData([...temp])
+        console.log({ ...e }.length)
+        // document.getElementById('cartItemNumber').innerText = e.length
+        // document.getElementsByClassName("CartPopUthop")[0].style.opacity = 1
+        // document.getElementsByClassName("CartPopUthop")[0].style.zIndex = 10
     }
     const change = (sum) => {
         let temp = props.Odata;
+        let cart = getCartData()
         if (!sum && temp[props.index].incart == 1) {
             temp[props.index].incart = 0;
             temp[props.index].isInCart = false
+            cart.totalItems = cart.totalItems - 1
+            delete cart[props.data.id.toString()];
+            let total = 0
+            for (let i in cart) {
+                try {
+                    if (cart[i].price != undefined || cart[i].price != null)
+                        total = (cart[i].price * cart[i].quantity) + total
+                    console.log(i)
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+            cart.totalPrice = total
+            console.log(cart)
+            props.setItems(cart.totalItems)
+            props.setPrice(total)
+            setCartData(cart)
         } else {
-            temp[props.index].incart = sum ? temp[props.index].incart + 1 : temp[props.index].incart - 1
+            if (sum) {
+                temp[props.index].incart = temp[props.index].incart + 1;
+                cart["" + props.data.id].quantity += 1
+            } else {
+                temp[props.index].incart = temp[props.index].incart - 1
+                cart["" + props.data.id].quantity -= 1
+            }
+            // document.getElementById('cartItemNumber').innerText = cart.length
+            cart.totalItems = Object.keys(cart).length - 2
+            let total = 0
+            for (let i in cart) {
+                try {
+                    if (cart[i].price != undefined || cart[i].price != null)
+                        total = (cart[i].price * cart[i].quantity) + total
+                    console.log(i)
+                } catch (e) {
+                    console.log(e)
+                }
+            }
+            cart.totalPrice = total
+            props.setItems(cart.totalItems)
+            props.setPrice(total)
+            setCartData(cart)
+            console.log(cart)
+            // temp[props.index].incart = sum ? temp[props.index].incart + 1 : temp[props.index].incart - 1
         }
         props.setData([...temp])
     }
+    let masterCart = getCartData()
     return (
         <div className='CommonPC'>
-            <img src={props.data.img} alt="" />
+            {/* <img src={props.data.img} alt="" /> */}
+            <PhotoProvider>
+                <PhotoView src={props.data.img} >
+                    <img src={props.data.img} alt="" />
+                </PhotoView>
+            </PhotoProvider>
             <div className="CPCR">
-                <div  className="lightText crtText">{props.data.brand}</div>
-                <div className="">{props.data.name}</div>
+                <div className="lightText crtText">{props.data.brand}</div>
+                <div className="CPCRName">{props.data.name}</div>
                 <div className="lightText crtText">{props.data.quantity}</div>
                 <div className="pricerow row">
                     <div style={{ color: '#DB6027', fontWeight: '500' }} className="redtext"><i class="fa-solid fa-indian-rupee-sign"></i> {props.data.price}</div>
-                    {props.data.isInCart ? <>
+                    {masterCart[props.data.id] != undefined && props.data.isInCart ? <>
                         <div className="PCBrow ProductAdd">
                             <i onClick={() => change(false)} class="fa-solid fa-minus"></i>
                             <span>{props.data.incart}</span>

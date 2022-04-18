@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getRecommend } from '../Apis globals/CartRecommend'
 import CartCard from './CommonComponents/CartCard'
 import ProductLongCard from './CommonComponents/ProductLongCard'
 import './Styles/Cart.css'
@@ -26,6 +27,24 @@ export default function Cart() {
         { isInCart: false, img: 'Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
         { isInCart: false, img: 'Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
     ])
+    useEffect(() => {
+        getRecommend().then(e => {
+            let temp = []
+            for (let i of e) {
+                temp.push({
+                    isInCart: false,
+                    img: i.image,
+                    brand: i.brand,
+                    incart: 0,
+                    name: i.name,
+                    quantity: i.unit,
+                    price: i.price
+                })
+            }
+            setCartData([...temp])
+        })
+    }, [])
+
     return (
         <div className='cartPage'>
             <div className='CommonTop'>

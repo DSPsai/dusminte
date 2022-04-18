@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { Authentication } from '../../Apis globals/AuthAPI'
 import ScrollTop from '../ScrollTop'
 
 export default function ProfileInfo() {
@@ -17,7 +18,59 @@ export default function ProfileInfo() {
     const go = useNavigate()
     useEffect(() => {
         document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
+        let temp = JSON.parse(localStorage.getItem('UserData'))
+        let temp1 = [
+            { name: 'Name', value: temp.customer.name },
+            { name: 'Email Id', value: temp.customer.email },
+            { name: 'Mobile Number', value: temp.customer.contact },
+        ]
+        let temp2 = {
+            loc: temp.communityId.address,
+            com: temp.communityId.name
+        }
+        SuData([...temp1]);
+        SuDdata({ ...temp2 });
+        try {
+            if (JSON.parse(localStorage.getItem('UserData')).customer.name == null) {
+                Authentication().then(e => {
+                    let temp = e
+                    let temp1 = [
+                        { name: 'Name', value: temp.customer.name },
+                        { name: 'Email Id', value: temp.customer.email },
+                        { name: 'Mobile Number', value: temp.customer.contact },
+                    ]
+                    let temp2 = {
+                        loc: temp.communityId.address,
+                        com: temp.communityId.name
+                    }
+                    SuData([...temp1]);
+                    SuDdata({ ...temp2 });
+                    setLoad(true)
+                })
+            } else {
+                setLoad(true)
+            }
+        } catch (e) {
+            Authentication().then(e => {
+                let temp = e
+                let temp1 = [
+                    { name: 'Name', value: temp.customer.name },
+                    { name: 'Email Id', value: temp.customer.email },
+                    { name: 'Mobile Number', value: temp.customer.contact },
+                ]
+                let temp2 = {
+                    loc: temp.communityId.address,
+                    com: temp.communityId.name
+                }
+                SuData([...temp1]);
+                SuDdata({ ...temp2 });
+                setLoad(true)
+            })
+        };
     }, [])
+    const [uData, SuData] = useState({})
+    const [uDdata, SuDdata] = useState({})
+    const [load, setLoad] = useState(false)
     return (
         <div className='ProfileInfoContainer'>
             <div className="ProfileInfoContainerTop">
@@ -31,34 +84,34 @@ export default function ProfileInfo() {
                 </div>
             </div>
             <div className="ProfileInfoContainerData">
-                {Rdata.map((item, index) => {
+                {load && uData.map((item, index) => {
                     return <Row index={index} data={item} />
                 })}
                 <div onClick={() => go('/Dropdown1')} className="ProfileEditRow">
-                    <b>Location</b><br />
+                    <b>Community</b><br />
                     <div className='CustomSelect leftright'>
-                        <span> Chennai</span>
+                        <span> {uDdata.com}</span>
                         <i class="fa-solid fa-sort-down"></i>
                     </div>
                 </div>
                 <div onClick={() => go('/Dropdown1')} className="ProfileEditRow">
-                    <b>Community</b><br />
+                    <b>Location</b><br />
                     <div className='CustomSelect leftright'>
-                        <span> BRIGADE XANADU</span>
+                        <span>{uDdata.loc}</span>
                         <i class="fa-solid fa-sort-down"></i>
                     </div>
                 </div>
                 <div className="row">
                     <div onClick={() => go('/Dropdown2/Tower')} className="nopaddTop ProfileEditRow">
                         <b>Tower / Block</b><br />
-                        <div style={{width:'100%'}} className='CustomSelect leftright'>
+                        <div style={{ width: '100%' }} className='CustomSelect leftright'>
                             <span> TOWER 2</span>
                             <i class="fa-solid fa-sort-down"></i>
                         </div>
                     </div>
                     <div onClick={() => go('/Dropdown2/Flat or House')} className="ProfileEditRow">
                         <b>Flat/ House no.</b><br />
-                        <div style={{width:'100%'}} className='CustomSelect leftright'>
+                        <div style={{ width: '100%' }} className='CustomSelect leftright'>
                             <span> 5</span>
                             <i class="fa-solid fa-sort-down"></i>
                         </div>
@@ -66,7 +119,7 @@ export default function ProfileInfo() {
                     </div>
                 </div>
                 <button className='ProfileEditSave ProductAdd'>Save</button>
-                <center style={{ fontSize:'17px',opacity: '0.6', padding: '15px', paddingTop: '20px' }}>
+                <center style={{ fontSize: '17px', opacity: '0.6', padding: '15px', paddingTop: '20px' }}>
                     *if you are unable to find your flat details, please write to us at support@dusminute.com
                 </center>
             </div>

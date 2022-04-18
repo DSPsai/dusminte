@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { Authentication } from '../../Apis globals/AuthAPI';
 import Bottom from '../Bottom'
 import Search from '../Home/Search';
 import ScrollTop from '../ScrollTop';
@@ -181,7 +182,26 @@ export default function Profile() {
   const [showOrders, setShowOrders] = useState(false)
   useEffect(() => {
     document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
+    SuData({ ...JSON.parse(localStorage.getItem('UserData')) })
+    try {
+      if (JSON.parse(localStorage.getItem('UserData')).customer.name == null) {
+        Authentication().then(e => {
+          SuData({ ...e })
+          setLoad(true)
+        })
+      } else {
+        setLoad(true)
+      }
+    } catch (e) {
+      Authentication().then(e => {
+        console.log(e)
+        SuData({ ...e })
+        setLoad(true)
+      })
+    };
   }, [])
+  const [uData, SuData] = useState({})
+  const [load, setLoad] = useState(false)
   return (
     <div className='ProfileContainer'>
       <div className='HomeTop'>
@@ -190,8 +210,8 @@ export default function Profile() {
         <span style={{ textAlign: 'end' }}><i onClick={() => { history('/Profile'); document.getElementById('SearchBottom').style.top = '0' }} class="fontcolor fa-solid fa-magnifying-glass"></i></span>
       </div>
       <div style={{ marginTop: '60px' }} className="profileNameCard">
-        <div className="profileName"><b>Jay</b></div>
-        <div className="profileMail"> 6303125378 <i style={{ fontSize: '5px', margin: '0 5px' }} class="fa-solid fa-circle"></i> dspsaiprudhvi007@gmail.com</div>
+        <div className="profileName"><b>{load && uData.customer.name}</b></div>
+        <div className="profileMail"> {load && uData.customer.contact} <i style={{ fontSize: '5px', margin: '0 5px' }} class="fa-solid fa-circle"></i> {load && uData.customer.email}</div>
       </div>
       <div style={{ fontWeight: '500', fontSize: '16.5px' }} onClick={() => go('/ProfileEdit')} className="S3Right">
         Edit
@@ -199,8 +219,8 @@ export default function Profile() {
       <div style={{ paddingTop: '0px' }} className="profileNameCard">
         <div style={{ fontSize: '14px', marginTop: '-10px' }} className="profileName"><b>Address</b></div>
         <div className="profileMail">
-          jay, 8140599075<br />
-          C 1013,C1,ASSETZ 63 DEGREE EAST
+          {load && uData.customer.name + ", " + uData.customer.contact}<br />
+          {load && uData.communityId.name + ", " + uData.communityId.address}
         </div>
       </div>
       <div className="ProfileCard">
