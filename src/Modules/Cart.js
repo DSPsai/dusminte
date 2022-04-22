@@ -1,14 +1,74 @@
+import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getCartData, getCartItems } from '../Apis globals/cartAPI'
 import { getRecommend } from '../Apis globals/CartRecommend'
 import CartCard from './CommonComponents/CartCard'
 import ProductLongCard from './CommonComponents/ProductLongCard'
 import './Styles/Cart.css'
-export default function Cart() {
+import { setCartData as setCart } from '../Apis globals/cartAPI'
+
+function loadScript(src) {
+    return new Promise((resolve) => {
+        const script = document.createElement('script')
+        script.src = src
+        script.onload = () => {
+            resolve(true)
+        }
+        script.onerror = () => {
+            resolve(false)
+        }
+        document.body.appendChild(script)
+    })
+}
+export default function Cart(prop) {
     useEffect(() => {
         // document.getElementsByClassName('CartPopUthop')[0].getElementsByClassName('CartPopUpright')[0].innerHTML = 'Select Payment &emsp;<i class="fa-solid fa-credit-card"></i>'
         // document.getElementsByClassName('CartPopUthop')[0].style.bottom = 0
     }, [])
+    const userData = JSON.parse(localStorage.getItem('UserData'))
+    const razorPay = async (orderId) => {
+        const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+        if (!res) {
+            alert('Payment not available, Please try after sometime ')
+            return
+        }
+        const options = {
+            key: 'rzp_test_voMJUqe57ZpZjL',
+            amount: '100000',
+            currency: 'INR',
+            name: "name",
+            description: 'nothing but a fake money transfer',
+            image: 'http://localhost:3000/static/images/user-profile.png',
+            order_id: orderId,
+            handler: function (response) {
+                // var postdat = {
+                //     razorpay_payment_id: response.razorpay_payment_id,
+                //     razorpay_order_id: response.razorpay_order_id,
+                //     razorpay_signature: response.razorpay_signature
+                // }
+                console.log(response)
+                // axios.post(`${process.env.REACT_APP_API_URL1}/main/pay/success`, postdat, {
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': `JWT ${localStorage.getItem('access')}`,
+                //         'Accept': 'application/json',
+                //     }
+                // }).then(response => {
+                //     console.log(response)
+                //     alert('order received')
+                //     window.location.href = '/mycart'
+                // }).catch(error => {
+                //     console.log(error)
+                // })
+            },
+            theme: {
+                color: "#3399cc"
+            }
+        }
+        const paymentObject = new window.Razorpay(options)
+        paymentObject.open()
+    }
     let go = useNavigate()
     const [items, setItems] = useState([
         { img: 'Images/corn.png', price: 25, name: '24 Mantra - Organic Mustard Big', quantity: '100 G', number: 2 },
@@ -28,23 +88,141 @@ export default function Cart() {
         { isInCart: false, img: 'Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
     ])
     useEffect(() => {
+        // localStorage.removeItem('coupon')
+        let masterCart = getCartData()
         getRecommend().then(e => {
             let temp = []
             for (let i of e) {
                 temp.push({
-                    isInCart: false,
+                    isInCart: masterCart[i._id] != undefined ? true : false,
                     img: i.image,
                     brand: i.brand,
-                    incart: 0,
+                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
                     name: i.name,
                     quantity: i.unit,
-                    price: i.price
+                    price: i.price,
+                    off: i.priceDiscount,
+                    cprice: i.priceDiscounted,
+                    id: i._id
                 })
             }
             setCartData([...temp])
         })
+        getCartItems().then(e => {
+            let temp = []
+            let calc = {}
+            for (let i of e) {
+                calc[i._id] = {
+                    "product": { ...e },
+                    "count": masterCart[i._id].quantity,
+                    "purchasedQuantity": masterCart[i._id].quantity,
+                    "frequency": 'daily',
+                    "frequencyDays": ['tuesday']
+                }
+                temp.push({
+                    isInCart: masterCart[i._id] != undefined ? true : false,
+                    img: i.image,
+                    brand: i.brand,
+                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                    name: i.name,
+                    quantity: i.unit,
+                    price: i.price,
+                    off: i.priceDiscount,
+                    cprice: i.priceDiscounted,
+                    id: i._id
+                })
+            }
+            console.log(e)
+            setItems(temp)
+            orderCalculation(calc)
+        })
     }, [])
+    const orderConfirm = async () => {
+        let tot = 0
+        for (let i in masterCart) {
+            if (i.quantity != undefined)
+                tot += i.quantity
+        }
+        console.log(tot)
+        console.log(pD.params)
+        await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "orderCheckout",
+                "params": { "cart": pD.params }
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            razorPay(response.data.data._id)
+        }).catch(err => {
+        })
+    }
+    let masterCart = getCartData()
+    const [pD, setPd] = useState({})
+    const orderCalculation = async (dat) => {
+        var tot = 0
+        for (let i in masterCart) {
+            if (masterCart[i].quantity != undefined) {
+                tot += masterCart[i].quantity
+            }
+        }
+        console.log(tot)
+        await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "orderCalculation",
+                "params": {
+                    "cart": {
+                        "orderType": "oneTime",
+                        "items": dat,
+                        "outOfStock": {},
+                        "countTotal": tot,
+                        "amountTotal": masterCart.totalPrice,
+                        "amountTotalWeekly": 0,
+                        "deliveries": 0,
+                        "deliveryDates": [],
+                        "deliveryCharges": 0,
+                        "couponDiscount": 0,
+                        "couponName": coupon
+                    }
 
+                }
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            console.log(response.data.data)
+            setPrices({
+                itemTotal: masterCart.totalPrice,
+                toPay: response.data.data.amountTotal,
+                discount: masterCart.totalPrice - response.data.data.amountTotal,
+                delivery_fee: response.data.data.deliveryCharges
+            })
+            // prop.setPrice(100)
+            console.log(getCartData())
+            // setCart({ ...masterCart, totalPrice: response.data.data.amountTotal })
+            console.log('setted')
+            setPd({
+                "params": response.data.data
+            })
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+    const [prices, setPrices] = useState({
+        itemTotal: masterCart.totalPrice,
+        discount: 0,
+        delivery_fee: 0,
+        toPay: masterCart.totalPrice,
+    })
+    let coupon = localStorage.getItem('coupon') == undefined ? null : localStorage.getItem('coupon')
     return (
         <div className='cartPage'>
             <div className='CommonTop'>
@@ -63,12 +241,12 @@ export default function Cart() {
                 </div>
             </div>
             {items.map((item, index) => {
-                return <CartCard index={index} Odata={items} sData={setItems} data={item} />
+                return <CartCard setItems={prop.setItems} setPrice={prop.setPrice} index={index} Odata={items} setData={setItems} data={item} />
             })}
             <div className="applycoupon row">
-                <div style={{ whiteSpace: 'nowrap' }} className="">
+                <div onClick={() => { go('/Coupon') }} style={{ whiteSpace: 'nowrap' }} className="">
                     <i class="fa-solid fa-tag"></i>
-                    <b style={{ whiteSpace: 'nowrap' }}>Apply Coupon</b>
+                    <b style={{ whiteSpace: 'nowrap' }}>{coupon == null ? "Apply Coupon" : <span className='greentext'>{coupon}&emsp;<small>Applied</small></span>}</b>
                 </div>
                 <i class="fa-solid fa-angle-right"></i>
             </div>
@@ -88,7 +266,7 @@ export default function Cart() {
                         ItemTotal
                     </div>
                     <div className="lightText">
-                        <i class="fa-solid fa-indian-rupee-sign"></i> 345
+                        <i class="fa-solid fa-indian-rupee-sign"></i> {prices.itemTotal}
                     </div>
                 </div>
                 <div className="leftright">
@@ -96,7 +274,7 @@ export default function Cart() {
                         Discount
                     </div>
                     <div className="lightText">
-                        <div className="greentext">-<i class="fa-solid fa-indian-rupee-sign"></i> 0</div>
+                        <div className="greentext">-<i class="fa-solid fa-indian-rupee-sign"></i> {prices.discount}</div>
                     </div>
                 </div>
                 <div className="leftright">
@@ -104,7 +282,7 @@ export default function Cart() {
                         Delivery Fee
                     </div>
                     <div className="lightText">
-                        <i class="fa-solid fa-indian-rupee-sign"></i> 0
+                        <i class="fa-solid fa-indian-rupee-sign"></i> {prices.delivery_fee}
                     </div>
                 </div>
                 <div className="leftright">
@@ -112,7 +290,7 @@ export default function Cart() {
                         <b>To Pay</b>
                     </div>
                     <div className="">
-                        <b><i class="fa-solid fa-indian-rupee-sign"></i> 345</b>
+                        <b><i class="fa-solid fa-indian-rupee-sign"></i> {prices.toPay}</b>
                     </div>
                 </div>
             </div>
@@ -121,9 +299,19 @@ export default function Cart() {
             </div>
             <div className="CartRproduct">
                 {productCardData.map((item, index) => {
-                    return <ProductLongCard Odata={productCardData} setData={setCartData} index={index} data={item} />
+                    return <ProductLongCard Cdata={items} setCitems={setItems} setItems={prop.setItems} setPrice={prop.setPrice} Odata={productCardData} setData={setCartData} index={index} data={item} />
                 })}
             </div>
+            <div onClick={() => orderConfirm()} style={{ zIndex: 20, bottom: 0 }} className="CartPopUthop"><div className='CartPopUp'>
+                <div className="CartPopUpleft">
+                    <span id="cartItemNumber">{masterCart.totalItems}</span> Items | <i class="fa-solid fa-indian-rupee-sign"></i> <span id="cartItemPrice">{prices.toPay}</span>
+                </div>
+                <div className="CartPopUpright">
+                    <span> Proceed</span> <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+            </div>
+            </div>
+            {/* <button>Checkout</button> */}
         </div>
     )
 }

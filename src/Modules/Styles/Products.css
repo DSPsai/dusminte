@@ -9,7 +9,8 @@
     padding-top: 13px;
     background-color: white;
     display: flex;
-    overflow-y: scroll;
+    /* grid-template-columns: repeat(auto-fill, calc(33vw + 10.9px)); */
+    overflow-x: scroll;
     padding-bottom: 13px;
     margin-bottom: 10px;
 }
@@ -23,10 +24,12 @@
     border: 2px solid rgb(228, 244, 239);
     padding: 10px;
     border-radius: 5px;
+    min-width: calc(33vw - 30.9px);
+    max-width: calc(33vw - 30.9px);
 }
 
 .ProductPageTopCard img {
-    width: calc(33vw - 42px);
+    width: 100%;
     object-fit: contain;
 }
 

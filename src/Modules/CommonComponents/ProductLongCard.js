@@ -11,7 +11,7 @@ export default function ProductLongCard(props) {
         let another = props.data.id.toString()
         // let temper = {}
         // temper = 
-        e[another] = { name: props.data.id.toString(), price: props.data.price, quantity: 1 }
+        e[another] = { name: props.data.id.toString(), cprice: props.data.cprice, quantity: 1 }
         console.log(e, Object.keys(e).length)
         e.totalItems = Object.keys(e).length - 2
         if (e.totalItems <= 1) {
@@ -20,8 +20,8 @@ export default function ProductLongCard(props) {
         let total = 0
         for (let i in e) {
             try {
-                if (e[i].price != undefined || e[i].price != null)
-                    total = (e[i].price * e[i].quantity) + total
+                if (e[i].cprice != undefined || e[i].cprice != null)
+                    total = (e[i].cprice * e[i].quantity) + total
                 console.log(i)
             } catch (e) {
                 console.log(e)
@@ -32,6 +32,7 @@ export default function ProductLongCard(props) {
         props.setPrice(total)
         setCartData(e)
         props.setData([...temp])
+        if (props.setCitems) props.setCitems([...props.Cdata, props.data])
         console.log({ ...e }.length)
         // document.getElementById('cartItemNumber').innerText = e.length
         // document.getElementsByClassName("CartPopUthop")[0].style.opacity = 1
@@ -48,8 +49,8 @@ export default function ProductLongCard(props) {
             let total = 0
             for (let i in cart) {
                 try {
-                    if (cart[i].price != undefined || cart[i].price != null)
-                        total = (cart[i].price * cart[i].quantity) + total
+                    if (cart[i].cprice != undefined || cart[i].cprice != null)
+                        total = (cart[i].cprice * cart[i].quantity) + total
                     console.log(i)
                 } catch (e) {
                     console.log(e)
@@ -73,8 +74,8 @@ export default function ProductLongCard(props) {
             let total = 0
             for (let i in cart) {
                 try {
-                    if (cart[i].price != undefined || cart[i].price != null)
-                        total = (cart[i].price * cart[i].quantity) + total
+                    if (cart[i].cprice != undefined || cart[i].cprice != null)
+                        total = (cart[i].cprice * cart[i].quantity) + total
                     console.log(i)
                 } catch (e) {
                     console.log(e)
@@ -88,6 +89,9 @@ export default function ProductLongCard(props) {
             // temp[props.index].incart = sum ? temp[props.index].incart + 1 : temp[props.index].incart - 1
         }
         props.setData([...temp])
+        if (props.setCitems) {
+            props.setCitems([...props.Cdata, props.data])
+        }
     }
     let masterCart = getCartData()
     return (
@@ -99,11 +103,15 @@ export default function ProductLongCard(props) {
                 </PhotoView>
             </PhotoProvider>
             <div className="CPCR">
+                <div style={{ opacity: props.data.off ? 1 : 0 }} className="PCoff"><i style={{ fontSize: '10px' }} class="fa-solid fa-indian-rupee-sign"></i> {props.data.off} OFF</div>
                 <div className="lightText crtText">{props.data.brand}</div>
                 <div className="CPCRName">{props.data.name}</div>
                 <div className="lightText crtText">{props.data.quantity}</div>
                 <div className="pricerow row">
-                    <div style={{ color: '#DB6027', fontWeight: '500' }} className="redtext"><i class="fa-solid fa-indian-rupee-sign"></i> {props.data.price}</div>
+                    <div style={{ color: '#DB6027', fontWeight: '500' }} className="redtext">
+                        <i class="fa-solid fa-indian-rupee-sign"></i> {props.data.cprice}
+                        &ensp;<s style={{ color: 'rgba(50, 59, 76,0.5)', fontSize: '12px' }}>{props.data.cprice == props.data.price ? "" : props.data.price}</s>
+                    </div>
                     {masterCart[props.data.id] != undefined && props.data.isInCart ? <>
                         <div className="PCBrow ProductAdd">
                             <i onClick={() => change(false)} class="fa-solid fa-minus"></i>

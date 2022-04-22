@@ -9,7 +9,7 @@ export const getSingleData = async (cat) => {
                 "search": ""
             },
             "category": cat.toUpperCase(),
-            "storeId": "1013"
+            "storeId": JSON.parse(localStorage.getItem('UserData')).communityId.inventoryStoreId
         }
     }).then(e => { return e })
     // } else {

@@ -344,3 +344,20 @@ select {
     height: 100vh;
     overflow-y: scroll;
 }
+
+.dropdownitem img {
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+}
+
+.dropdownitem_name b {
+    font-weight: 500 !important;
+    font-size: 17px;
+    white-space: nowrap;
+}
+
+.dropdownitem_addr {
+    font-size: 15px;
+    opacity: 0.5;
+}

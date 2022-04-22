@@ -13,13 +13,16 @@
     /* padding-left: 3px;
     padding-right: 3px; */
 }
-.HomeTopLocation{
+
+.HomeTopLocation {
     display: flex;
     align-items: center;
 }
-.HomeTopLocation i{
+
+.HomeTopLocation i {
     margin-left: 15px;
 }
+
 .HomeTop .fa-location-dot {
     color: orange
 }
@@ -54,7 +57,7 @@
 }
 
 .each-slide>div {
-    height: 160px;
+    height: 140px;
     background-size: cover;
     border-radius: 10px;
 }

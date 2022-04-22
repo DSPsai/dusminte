@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { RecommendedCall } from '../../Apis globals/HomepageApi';
 import ProductLongCard from '../CommonComponents/ProductLongCard';
 import '../Styles/Search.css'
 export default function Search(props) {
-    const recent = ['cheese', 'milk', 'cheese', 'milk', 'cheese', 'milk',]
+    const [recent, setRecent] = useState(localStorage.getItem('recent') != undefined ? JSON.parse(localStorage.getItem('recent')) : [])
     const Recent = () => {
         let temp = [];
         for (let i of recent) {
@@ -11,7 +12,6 @@ export default function Search(props) {
         }
         return <>{temp}</>
     }
-
     const searchMe = async (e) => {
         setLoad(true)
         let val = e
@@ -61,6 +61,16 @@ export default function Search(props) {
             }).catch(err => {
                 setLoad(false)
             })
+        RecommendedCall('pop').then(e => {
+            // let temp = []
+            // for (let i of e) {
+            //     temp.push({
+            //         name: i.name,
+            //         img: i.image
+            //     })
+            // }
+            setsCards([...e])
+        })
     }
     const [value, setValue] = useState("")
     useEffect(() => {
@@ -73,13 +83,13 @@ export default function Search(props) {
     }, [value])
 
     const [data, setData] = useState([])
-    const searchCards = [
+    const [searchCards, setsCards] = useState([
         { img: '/Images/egg.png', name: 'Eggs & Diary' },
         { img: '/Images/bread.png', name: 'Bread & Bakery' },
         { img: '/Images/cool.png', name: 'Beverages' },
         { img: '/Images/fruit.png', name: 'Fresh Fruits' },
         { img: '/Images/care.png', name: 'Personal Care' },
-    ]
+    ])
     const services = [
         {
             img: `<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +125,6 @@ export default function Search(props) {
         }
     ]
     const [load, setLoad] = useState(false)
-
     const [pC, setPc] = useState(-1)
     const [tData, setTdata] = useState([])
     const [tData1, setTdata1] = useState([])
@@ -126,6 +135,7 @@ export default function Search(props) {
         setTdata(temp)
         console.log(temp)
     }, [pC])
+    const [showP,setShowp]=useState(false)
     return (
         <div
             //  style={{ top: props.bottom }}
@@ -134,7 +144,9 @@ export default function Search(props) {
             <div className="sBMy row">
                 <div className="searchbar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input onChange={(e) => setValue(e.target.value)} placeholder='Search for any product or service' />
+                    <input onChange={(e) => {
+                        setValue(e.target.value)
+                    }} placeholder='Search for any product or service' />
                 </div>
                 <span style={{ marginLeft: '15px', fontSize: '11px' }} onClick={() => document.getElementById('SearchBottom').style.top = '100vh'} className='BackButton'>
                     <i class="fa-solid fa-xmark"></i>
@@ -144,18 +156,34 @@ export default function Search(props) {
             {value.length > 0 ? <>
                 {value.length > 2 ? load ? <i class="fa-solid fa-group-arrows-rotate"></i> : <>
                     <div style={{ marginLeft: '0px', padding: '10px' }} className='profileCardName'>Products</div>
-                    <div className="ProductPageCards">{pC == -1 ? data.map((e, indexer) => {
-                        return <div onClick={() => setPc(indexer)} className='SearchedItem'>{e.map((er, index) => {
-                            return <span >{er}<span className='SearchedItemH'>{index < e.length - 1 ? value : <></>}</span></span>
-                        })}</div>
-                    }) : <>
-                        {tData.map((item, index) => {
-                            return <ProductLongCard Odata={tData} setData={setTdata} index={index} data={item} />
-                        })}
-                    </>}</div></> : <><h3>Enter 3 characters</h3></>}
+                    <div className="ProductPageCards">
+                        {pC == -1 ? data.map((e, indexer) => {
+                            return <>
+                                <div onClick={() => setPc(0)} className='SearchedItem leftright'><span>See all the products related to "{value}"</span><span><i class="fa-solid fa-up-right-from-square"></i></span></div>
+                                <div onClick={() => {
+                                    if (recent.indexOf(e.join(value) < 0)) {
+                                        setRecent([...recent, e.join(value)])
+                                        localStorage.setItem('recent', JSON.stringify(recent))
+                                    }
+                                    setPc(indexer)
+                                }} className='SearchedItem'>{e.map((er, index) => {
+                                    return <span >{er}<span className='SearchedItemH'>{index < e.length - 1 ? value : <></>}</span></span>
+                                })}</div>
+                            </>
+                        }) : <>
+                            {tData.map((item, index) => {
+                                return <ProductLongCard Odata={tData} setData={setTdata} index={index} data={item} />
+                            })}
+                        </>}</div></> : <><h3>Enter 3 characters</h3></>}
             </> : <>
-                <div className="SearchTitle">
-                    Recent Product Searches
+                <div style={{ marginLeft: 0, marginRight: 0 }} className="SearchTitle leftright">
+                    <span>Recent Product Searches</span>
+                    <span
+                        onClick={() => {
+                            setRecent([])
+                            localStorage.removeItem('recent')
+                        }}
+                    >Clear</span>
                 </div>
                 <div className="recentItems">
                     <Recent />
@@ -167,16 +195,19 @@ export default function Search(props) {
                 </div>
                 <div className="SearchCardContainer">
                     {searchCards.map(item => {
-                        return <div className="SearchCard">
+                        return <div onClick={() => {
+                            setTdata([...searchCards])
+
+                        }} className="SearchCard">
                             <div className="searchCardImg">
-                                <img src={item.img} />
+                                <img src={item.image} />
                             </div>
                             <div className="SearchCardTitle">{item.name}</div>
                         </div>
                     })}
                 </div>
                 {/* <div className="backgroundgrey"></div> */}
-                <div className="SearchTitle">
+                {/* <div className="SearchTitle">
                     Popular Services
                 </div>
                 <div className="SearchCardContainer">
@@ -187,7 +218,7 @@ export default function Search(props) {
                             <div className="SearchCardTitle">{item.name}</div>
                         </div>
                     })}
-                </div>
+                </div> */}
             </>
             }
         </div>

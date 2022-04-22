@@ -1,13 +1,70 @@
-import React, { useEffect } from 'react'
+import axios from 'axios'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 export default function Dropdown2() {
     let go = useNavigate()
     const url = decodeURIComponent(window.location.href.split('/').pop())
-
+    const apiCall = async () => {
+        if (url == 'Tower')
+            return await axios({
+                method: "post",
+                url: `${process.env.REACT_APP_API_URL1}`,
+                data: {
+                    "operation": "tower",
+                    "params": {
+                        "communityId": JSON.parse(localStorage.getItem('community'))[0].id
+                    }
+                },
+                headers: {
+                    'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                    'Accept': 'application/json'
+                },
+            }).then(response => {
+                return response.data.data
+            }).catch(err => {
+            })
+        else return await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "flat",
+                "params": {
+                    "towerId": JSON.parse(localStorage.getItem('tower')).id
+                }
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            return response.data.data
+        }).catch(err => {
+        })
+    }
     useEffect(() => {
         document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
+        apiCall().then(er => {
+            let temp = []
+            if (url == 'Tower')
+                for (let i of er) {
+                    temp.push({
+                        id: i._id,
+                        name: i.tower
+                    })
+                }
+            else
+                for (let i of er) {
+                    temp.push({
+                        id: i._id,
+                        name: i.flat
+                    })
+                }
+            setData([...temp])
+            console.log(er)
+        })
     }, [])
+    const [data, setData] = useState([])
     return (
         <div className='dropdown2'>
             <div style={{ backgroundColor: 'white' }} className="row">
@@ -18,15 +75,19 @@ export default function Dropdown2() {
                 </span>
                 <span className='commonHeading' style={{ marginTop: '10px', marginBottom: '10px' }}>{url}</span>
             </div>
-            <div className="Dropdown2Items">TOWER A</div>
-            <div className="Dropdown2Items">TOWER B</div>
-            <div className="Dropdown2Items">TOWER C</div>
-            <div className="Dropdown2Items">TOWER D</div>
-            <div className="Dropdown2Items">TOWER E</div>
-            <div className="Dropdown2Items">TOWER F</div>
-            <div className="Dropdown2Items">TOWER F</div>
-            <div className="Dropdown2Items">TOWER G</div>
-            <div className="Dropdown2Items">TOWER H</div>
+            {data.map(dat => {
+                return <div
+                    onClick={() => {
+                        if (url == 'Tower') {
+                            localStorage.setItem('tower', JSON.stringify(dat))
+                            localStorage.removeItem('flat')
+                        }
+                        else
+                            localStorage.setItem('flat', JSON.stringify(dat))
+                        go(-1)
+                    }}
+                    className="Dropdown2Items">{dat.name}</div>
+            })}
         </div>
     )
 }

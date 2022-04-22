@@ -62,3 +62,8 @@
     width: 100%;
     margin-left: 10px;
 }
+
+.CommonPC .PCoff {
+    position: absolute;
+    left: 10px;
+}

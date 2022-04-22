@@ -27,9 +27,8 @@ export default function CartItems(props) {
     //     setPrice(cart.totalPrice);
 
     // }, [])
-
     return (
-        <><div style={{ zIndex: props.items > 0 ? 10 : -1, opacity: props.items > 0 ? 1 : 0, bottom: loc == 'MyCart' || loc == 'Products' || loc == 'Recommendations' || loca.search(/SingleProducts/) >= 0 || loc == 'SingleProducts' ? 0 : 65 }} onClick={() => go('/MyCart')} className="CartPopUthop"><div className='CartPopUp'>
+        <><div style={{ zIndex: props.items > 0 ? 10 : -1, opacity: props.items > 0 ? 1 : 0, bottom: loc == 'MyCart' || loca.search(/Product/) >= 0 || loc == 'Recommendations' ? 0 : 65 }} onClick={() => go('/MyCart')} className="CartPopUthop"><div className='CartPopUp'>
             <div className="CartPopUpleft">
                 <span id="cartItemNumber">{props.items}</span> Items | <i class="fa-solid fa-indian-rupee-sign"></i> <span id="cartItemPrice">{props.price}</span>
             </div>

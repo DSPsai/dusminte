@@ -8,7 +8,7 @@ export const getRecommend = async () => {
             data: {
                 "operation": "cartRecommendedProducts",
                 "params": {
-                    "storeId": "1003"
+                    "storeId": JSON.parse(localStorage.getItem('UserData')).communityId.inventoryStoreId
                 }
             },
             headers: {
@@ -24,5 +24,42 @@ export const getRecommend = async () => {
     } else {
         console.log(Data)
         return [...Data]
+    }
+}
+/*
+{
+    "operation" : "listAllProductByTags",
+    "params" : {
+        "storeId" : "1003",
+        "tag" : ["pop"]
+    }
+}
+*/
+var aData = {}
+export const getHomeViewall = async (cat) => {
+    console.log(cat);
+    console.log(aData[cat])
+    if (aData[cat] == undefined) {
+        return await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "listAllProductByTags",
+                "params": {
+                    "storeId": JSON.parse(localStorage.getItem('UserData')).communityId.inventoryStoreId,
+                    "tag": [cat]
+                }
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            aData[cat] = response.data.data.data
+            return response.data.data.data
+        }).catch(err => {
+        })
+    } else {
+        return aData[cat]
     }
 }

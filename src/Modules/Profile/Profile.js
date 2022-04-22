@@ -181,6 +181,10 @@ export default function Profile() {
   }
   const [showOrders, setShowOrders] = useState(false)
   useEffect(() => {
+    localStorage.removeItem("community")
+    localStorage.removeItem("location")
+    localStorage.removeItem('tower')
+    localStorage.removeItem('flat')
     document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
     SuData({ ...JSON.parse(localStorage.getItem('UserData')) })
     try {

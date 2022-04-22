@@ -96,9 +96,15 @@ export default function Essentials() {
             <div style={{ padding: '20px' }} className="EssentialsCardContianer">
                 <div style={{ fontSize: '22px' }} className="HeadText">Shop by category</div>
                 <br />
-                {data.map((item, index) => {
+                {data.length > 0 ? data.map((item, index) => {
                     return <EssentialsCC index={index} data={item} />
-                })}
+                }) : Array.from(Array(9).keys()).map((item) => (
+                    <div class="card">
+                        <div class="card__image loading"></div>
+                        <div class="card__title loading"></div>
+                        <div class="card__description loading"></div>
+                    </div>
+                ))}
             </div>
             <Search setBottom={setSearch} bottom={search} />
             <Bottom show='Groceries' />

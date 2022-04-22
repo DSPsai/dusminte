@@ -9,14 +9,13 @@ import axios from 'axios';
 import { getBanner, getHomePageData, getMasterBanner, RecommendedCall } from '../../Apis globals/HomepageApi';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { getCartData, setCartData } from '../../Apis globals/cartAPI';
+import { toast } from 'react-toastify';
 export default function Home(props) {
   let name = 'afstst'
-  const [images, setImages] = useState([
-    { url: "https://rukminim1.flixcart.com/flap/750/350/image/34da8c2d1bec1851.jpg?q=20" },
-    { url: "https://rukminim1.flixcart.com/flap/750/350/image/208c836282c59f1e.jpeg?q=20" },
-  ]);
+  const [images, setImages] = useState([]);
   const HomeSection2Card = (data) => {
-    return <div onClick={() => data.name == 'Grocery' ? go('/Groceries') : go(`/Products/${data.name}`)} style={{ backgroundImage: `url('${data.img}')` }} className="HomeS2Card">
+    // console.log(data)
+    return <div onClick={() => data.name == 'Grocery' ? go('/Groceries') : data.navLink == 'SALE' ? go(`/Product3/SALE`) : go(`/Products/${data.navLink}`)} style={{ backgroundImage: `url('${data.img}')` }} className="HomeS2Card">
       <span>{data.name}</span>
     </div>
   }
@@ -30,7 +29,7 @@ export default function Home(props) {
       let another = data.data.id.toString()
       // let temper = {}
       // temper = 
-      e[another] = { name: data.data.id.toString(), price: data.data.price, quantity: 1 }
+      e[another] = { name: data.data.id.toString(), cprice: data.data.cprice, quantity: 1 }
       console.log(e, Object.keys(e).length)
       e.totalItems = Object.keys(e).length - 2
       if (e.totalItems <= 1) {
@@ -39,8 +38,8 @@ export default function Home(props) {
       let total = 0
       for (let i in e) {
         try {
-          if (e[i].price != undefined || e[i].price != null)
-            total = (e[i].price * e[i].quantity) + total
+          if (e[i].cprice != undefined || e[i].cprice != null)
+            total = (e[i].cprice * e[i].quantity) + total
           console.log(i)
         } catch (e) {
           console.log(e)
@@ -67,8 +66,8 @@ export default function Home(props) {
         let total = 0
         for (let i in cart) {
           try {
-            if (cart[i].price != undefined || cart[i].price != null)
-              total = (cart[i].price * cart[i].quantity) + total
+            if (cart[i].cprice != undefined || cart[i].cprice != null)
+              total = (cart[i].cprice * cart[i].quantity) + total
             console.log(i)
           } catch (e) {
             console.log(e)
@@ -92,8 +91,8 @@ export default function Home(props) {
         let total = 0
         for (let i in cart) {
           try {
-            if (cart[i].price != undefined || cart[i].price != null)
-              total = (cart[i].price * cart[i].quantity) + total
+            if (cart[i].cprice != undefined || cart[i].cprice != null)
+              total = (cart[i].cprice * cart[i].quantity) + total
             console.log(i)
           } catch (e) {
             console.log(e)
@@ -110,7 +109,11 @@ export default function Home(props) {
     }
     // let masterCart = getCartData()
 
-    return <div className="ProductCard">
+    return data.data.name == 'test' ? <div class="card">
+      <div class="card__image loading"></div>
+      <div class="card__title loading"></div>
+      <div class="card__description loading"></div>
+    </div> : <div className="ProductCard">
       <div style={{ opacity: data.data.off ? 1 : 0 }} className="PCoff"><i style={{ fontSize: '10px' }} class="fa-solid fa-indian-rupee-sign"></i> {data.data.off} OFF</div>
       {/* <img src={data.data.img} /> */}
       <PhotoProvider>
@@ -120,9 +123,9 @@ export default function Home(props) {
       </PhotoProvider>
       <div className="crtText lightText">{data.data.brand}</div>
       <span style={{ whiteSpace: 'normal', color: 'rgba(50, 59, 76, 1)' }}>{data.data.name}</span>
-      <div style={{ marginTop: 'auto' }} className="crtText lightText">{data.data.capacity}</div>
-      <div className="Price"><i class="fa-solid fa-indian-rupee-sign"></i> {data.data.aprice}
-        <span style={{ color: '#5F5F5F', fontSize: '12px' }}>&ensp;<s>{data.data.price}</s></span>
+      <div style={{ marginTop: 'auto' }} className="crtText lightText">{data.data.quantity}</div>
+      <div className="Price"><i class="fa-solid fa-indian-rupee-sign"></i> {data.data.cprice}
+        <span style={{ color: '#5F5F5F', fontSize: '12px' }}>&ensp;<s>{data.data.cprice == data.data.price ? "" : data.data.price}</s></span>
       </div>
       {
         data.data.isInCart ? <>
@@ -137,117 +140,167 @@ export default function Home(props) {
     </div >
   }
   const [dat, setDat] = useState([
-    { name: 'Potato Mixed Fruit Juice', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '30%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '40%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '50%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '60%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '70%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '80%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
-    { name: 'Mixed Fruit Juice', incart: 2, isInCart: false, off: '90%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
   ])
-  const [rec, serRec] = useState([])
-  const [pop, serPop] = useState([])
-  const [sale, serSale] = useState([])
+  const [rec, serRec] = useState([
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+  ])
+  const [pop, serPop] = useState([
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+  ])
+  const [sale, serSale] = useState([
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+    { name: 'test', incart: 2, isInCart: false, off: '10%', src: 'Images/corn.png', capacity: '1L', cutprice: 150, price: '110', brand: 'TROPICANA' },
+  ])
   let masterCart = getCartData()
   let history = useNavigate();
   const [search, setSearch] = useState('100vh')
   const [data, setData] = useState('')
   async function call() {
     async function callAuth() {
-      return await axios({
-        method: "post",
-        url: `${process.env.REACT_APP_API_URL1}`,
-        data: {
-          "operation": "userLoginAdmin",
-          "params":
-          {
-            "email": "admin@dusminute.com",
-            "password": "aDm1n@nk202!",
-            "deviceToken": ""
-          }
-        },
-      }).then(async response => {
-        localStorage.setItem("access", response.data.data.token)
-        localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
-
-      }).catch(e => { })
+      if (localStorage.getItem('UserData') == undefined) {
+        // console.log('one')
+        return await axios({
+          method: "post",
+          url: `${process.env.REACT_APP_API_URL1}`,
+          data: {
+            "operation": "userLoginMobile",
+            "params": {
+              "mobile": "7760838386"
+            }
+          },
+        }).then(async response => {
+          // console.log('two')
+          localStorage.setItem("access", response.data.data.userData.token)
+          // console.log('three')
+          console.log(response.data)
+          return await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+              "operation": "userDetail",
+              "params": {
+                "userId": response.data.data.userData.user._id
+              }
+            },
+            headers: {
+              'Authentication': `Bearer ${response.data.data.userData.token}`,
+              'Accept': 'application/json'
+            },
+          }).then(async response => {
+            console.log('executed')
+            // localStorage.setItem("access", response.data.data.userData.token)
+            localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
+            return response.data.data.user
+          }).catch(e => { })
+          // localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
+          // return response.data.data.user
+        }).catch(e => { })
+      }
     }
-    await getHomePageData().then(async easd => {
-      if (easd == null) {
-        callAuth().then(() => {
-          getHomePageData().then(async ea => {
-            setCate([...ea])
+    await callAuth().then(async (er) => {
+      console.log(er)
+      await getHomePageData().then(async easd => {
+        if (easd == null) {
+          await callAuth().then(() => {
+            getHomePageData().then(async ea => {
+              setCate([...ea])
+            })
           })
-        })
-      } else {
-        setCate([...easd])
+          console.log('helo')
+        } else {
+          setCate([...easd])
+        }
       }
-    }
-    );
-    RecommendedCall("rec").then(e => {
-      let temp = []
-      for (let i of e) {
-        temp.push({
-          isInCart: masterCart[i._id] != undefined ? true : false,
-          img: i.image,
-          brand: i.brand,
-          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
-          name: i.name,
-          quantity: i.unit,
-          price: i.price,
-          off: i.priceDiscount,
-          aprice: i.priceDiscounted,
-          id: i._id
-        })
-      }
-      serRec([...temp])
+      );
+      RecommendedCall("rec").then(e => {
+        let temp = []
+        for (let i of e) {
+          temp.push({
+            isInCart: masterCart[i._id] != undefined ? true : false,
+            img: i.image,
+            brand: i.brand,
+            incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+            name: i.name,
+            quantity: i.unit,
+            price: i.price,
+            off: i.priceDiscount,
+            cprice: i.priceDiscounted,
+            id: i._id
+          })
+        }
+        serRec([...temp])
+      })
+      RecommendedCall("pop").then(e => {
+        let temp = []
+        for (let i of e) {
+          temp.push({
+            isInCart: masterCart[i._id] != undefined ? true : false,
+            img: i.image,
+            brand: i.brand,
+            incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+            name: i.name,
+            quantity: i.unit,
+            price: i.price,
+            off: i.priceDiscount,
+            cprice: i.priceDiscounted,
+            id: i._id
+          })
+        }
+        serPop([...temp])
+      })
+      RecommendedCall("sale").then(e => {
+        let temp = []
+        for (let i of e) {
+          temp.push({
+            isInCart: masterCart[i._id] != undefined ? true : false,
+            img: i.image,
+            brand: i.brand,
+            incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+            name: i.name,
+            quantity: i.unit,
+            price: i.price,
+            off: i.priceDiscount,
+            cprice: i.priceDiscounted,
+            id: i._id
+          })
+        }
+        serSale([...temp])
+      })
+      getBanner().then(e => {
+        // console.log(e)
+        let temp = []
+        for (let i of e) {
+          try {
+            temp.push({ url: i.image, to: i.redirect.categoryId.name })
+          } catch (e) {
+            temp.push({ url: i.image, to: i.redirect.productId.name })
+          }
+        }
+        setImages(temp)
+      })
     })
-    RecommendedCall("pop").then(e => {
-      let temp = []
-      for (let i of e) {
-        temp.push({
-          isInCart: masterCart[i._id] != undefined ? true : false,
-          img: i.image,
-          brand: i.brand,
-          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
-          name: i.name,
-          quantity: i.unit,
-          price: i.price,
-          off: i.priceDiscount,
-          aprice: i.priceDiscounted,
-          id: i._id
-        })
-      }
-      serPop([...temp])
-    })
-    RecommendedCall("sale").then(e => {
-      let temp = []
-      for (let i of e) {
-        temp.push({
-          isInCart: masterCart[i._id] != undefined ? true : false,
-          img: i.image,
-          brand: i.brand,
-          incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
-          name: i.name,
-          quantity: i.unit,
-          price: i.price,
-          off: i.priceDiscount,
-          aprice: i.priceDiscounted,
-          id: i._id
-        })
-      }
-      serSale([...temp])
-    })
-    getBanner().then(e => {
-      // console.log(e)
-      let temp = []
-      for (let i of e) {
-        temp.push({ url: i.image })
-      }
-      setImages(temp)
-    })
+
     // await axios({
     //   method: "post",
     //   url: `${process.env.REACT_APP_API_URL1}`,
@@ -330,16 +383,15 @@ export default function Home(props) {
       </div>
       <div>
         <Slide arrows={false} easing="ease">
-          <div className="each-slide">
-            <div style={{ 'backgroundImage': `url(${images[0].url})` }}>
-              {/* <span>Slide 1</span> */}
+          {images.map(img => {
+            return <div onClick={() => {
+              localStorage.setItem('labels', JSON.stringify([]))
+              go(`/SingleProducts/${img.to}`)
+            }} className="each-slide">
+              <div style={{ 'backgroundImage': `url(${img.url})` }}>
+              </div>
             </div>
-          </div>
-          <div className="each-slide">
-            <div style={{ 'backgroundImage': `url(${images[1].url})` }}>
-              {/* <span>Slide 2</span> */}
-            </div>
-          </div>
+          })}
         </Slide>
       </div>
       <div className="HomeSection2">
@@ -347,7 +399,7 @@ export default function Home(props) {
         <hr />
         <div className="HomeS2container">
           {cate.map(item => {
-            return <HomeSection2Card goto={item.title == 'Grocery' ? 'Groceries' : 'Products'} name={item.title} img={item.bgImg} />
+            return <HomeSection2Card navLink={item.navLink} goto={item.title == 'Grocery' ? 'Groceries' : item.title == 'SALE' ? "Product3" : 'Products'} name={item.title} img={item.bgImg} />
           })}
           {/* <HomeSection2Card goto='Products' name='Fruits & Vegitables' img='Images/veggis.png' />
           <HomeSection2Card goto='Groceries' name='Grocery' img='Images/grocery.png' />
@@ -368,7 +420,7 @@ export default function Home(props) {
           })}
         </div>
       </div>
-      <div className="HomeSection3container">
+      <div style={{ paddingBottom: '100px' }} className="HomeSection3container">
         <div className="S3Top">
           <span style={{ fontWeight: '550', color: '#323B4C', fontSize: '20px' }}> Popular in your society </span>
           <div className="S3Right" onClick={() => go('/Product3/Popular in your society')}>
@@ -381,7 +433,7 @@ export default function Home(props) {
           })}
         </div>
       </div>
-      <div style={{ paddingBottom: '100px' }} className="HomeSection3container">
+      {/* <div style={{ paddingBottom: '100px' }} className="HomeSection3container">
         <div className="S3Top">
           <span style={{ fontWeight: '550', color: '#323B4C', fontSize: '20px' }}> Sale </span>
           <div className="S3Right" onClick={() => go('/Product3/Popular in your society')}>
@@ -393,7 +445,7 @@ export default function Home(props) {
             return <S3bottomCard Odata={sale} setData={serSale} index={index} data={item} />
           })}
         </div>
-      </div>
+      </div> */}
       {/* <Search setBottom={setSearch} bottom={search} /> */}
       <Bottom show='Home' />
       <pre>
@@ -402,3 +454,12 @@ export default function Home(props) {
     </div>
   )
 }
+
+/*
+
+1. Order Calculation
+2. Coupon Apply
+3. Recommended and popular "View All" api
+4. Banner navigation and call api
+
+*/

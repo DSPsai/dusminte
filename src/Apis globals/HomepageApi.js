@@ -7,8 +7,8 @@ export const HomePageByCommunity = async () => {
         data: {
             "operation": "homeSectionByCommunityCityId",
             "params": {
-                "cityId": 1,
-                "communityId": 1004
+                "cityId": JSON.parse(localStorage.getItem('UserData')).communityId.cityId,
+                "communityId": JSON.parse(localStorage.getItem('UserData')).communityId.inventoryStoreId
             }
         },
         headers: {
@@ -20,6 +20,7 @@ export const HomePageByCommunity = async () => {
         HomePageByCommunityData = [...response.data.data[1].tile]
         return response.data.data[1].tile
     }).catch(err => {
+        console.log(err)
     })
 }
 export const getHomePageData = async () => {
@@ -39,7 +40,7 @@ export const RecommendedCall = async (cat) => {
             data: {
                 "operation": "listProductByTags",
                 "params": {
-                    "storeId": "1003",
+                    "storeId": JSON.parse(localStorage.getItem('UserData')).communityId.inventoryStoreId,
                     "tag": [cat]
                 }
             },
@@ -53,6 +54,7 @@ export const RecommendedCall = async (cat) => {
             // HomePageByCommunityData = response.data.data[1].tile
             // return response.data.data[1].tile
         }).catch(err => {
+            console.log(err)
         })
     } else {
         return Recommended[cat]
@@ -80,6 +82,7 @@ export const getBanner = async () => {
             // HomePageByCommunityData = response.data.data[1].tile
             // return response.data.data[1].tile
         }).catch(err => {
+            console.log(err)
         })
     else return banner
 }
@@ -142,6 +145,7 @@ export const getSingleBanner = async (id) => {
                 singleBanner[id] = { images: temp }
                 return temp
             }).catch(err => {
+                console.log(err)
             })
         })
 

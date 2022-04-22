@@ -29,7 +29,40 @@ export default function ProfileInfo() {
             com: temp.communityId.name
         }
         SuData([...temp1]);
-        SuDdata({ ...temp2 });
+        let loc = localStorage.getItem('location');
+        let com = localStorage.getItem('community')
+        let tow = localStorage.getItem('tower')
+        let flat = localStorage.getItem('flat')
+        if (loc != undefined && com != undefined && tow != undefined && flat != undefined)
+            SuDdata({
+                loc: JSON.parse(loc)[0].name,
+                com: JSON.parse(com)[0].name,
+                tow: JSON.parse(tow).name,
+                flat: JSON.parse(flat).name,
+            });
+        else if (loc != undefined && com != undefined && tow != undefined)
+            SuDdata({
+                loc: JSON.parse(loc)[0].name,
+                com: JSON.parse(com)[0].name,
+                tow: JSON.parse(tow).name,
+                flat: ''
+            });
+        else if (loc != undefined && com != undefined)
+            SuDdata({
+                loc: JSON.parse(loc)[0].name,
+                com: JSON.parse(com)[0].name,
+                tow: "",
+                flat: ''
+            });
+        else if (loc != undefined)
+            SuDdata({
+                loc: JSON.parse(loc)[0].name,
+                com: "",
+                tow: "",
+                flat: ''
+            });
+        else
+            SuDdata({ ...temp2 });
         try {
             if (JSON.parse(localStorage.getItem('UserData')).customer.name == null) {
                 Authentication().then(e => {
@@ -44,7 +77,18 @@ export default function ProfileInfo() {
                         com: temp.communityId.name
                     }
                     SuData([...temp1]);
-                    SuDdata({ ...temp2 });
+                    if (localStorage.getItem('location') != undefined && localStorage.getItem('community') != undefined)
+                        SuDdata({
+                            loc: localStorage.getItem('location'),
+                            com: localStorage.getItem('community'),
+                        });
+                    else if (localStorage.getItem('location') != undefined)
+                        SuDdata({
+                            loc: localStorage.getItem('location'),
+                            com: "",
+                        });
+                    else
+                        SuDdata({ ...temp2 });
                     setLoad(true)
                 })
             } else {
@@ -63,13 +107,32 @@ export default function ProfileInfo() {
                     com: temp.communityId.name
                 }
                 SuData([...temp1]);
-                SuDdata({ ...temp2 });
+                console.log({
+                    loc: localStorage.getItem('location'),
+                    com: localStorage.getItem('community'),
+                })
+                if (localStorage.getItem('location') != undefined && localStorage.getItem('community') != undefined)
+                    SuDdata({
+                        loc: localStorage.getItem('location'),
+                        com: localStorage.getItem('community'),
+                    });
+                else if (localStorage.getItem('location') != undefined)
+                    SuDdata({
+                        loc: localStorage.getItem('location'),
+                        com: "",
+                    });
+                else
+                    SuDdata({ ...temp2 });
+
                 setLoad(true)
             })
         };
     }, [])
     const [uData, SuData] = useState({})
-    const [uDdata, SuDdata] = useState({})
+    const [uDdata, SuDdata] = useState({
+        loc: localStorage.getItem('location'),
+        com: localStorage.getItem('community')
+    })
     const [load, setLoad] = useState(false)
     return (
         <div className='ProfileInfoContainer'>
@@ -87,17 +150,17 @@ export default function ProfileInfo() {
                 {load && uData.map((item, index) => {
                     return <Row index={index} data={item} />
                 })}
-                <div onClick={() => go('/Dropdown1')} className="ProfileEditRow">
-                    <b>Community</b><br />
-                    <div className='CustomSelect leftright'>
-                        <span> {uDdata.com}</span>
-                        <i class="fa-solid fa-sort-down"></i>
-                    </div>
-                </div>
-                <div onClick={() => go('/Dropdown1')} className="ProfileEditRow">
+                <div onClick={() => go('/Dropdown1/location')} className="ProfileEditRow">
                     <b>Location</b><br />
                     <div className='CustomSelect leftright'>
                         <span>{uDdata.loc}</span>
+                        <i class="fa-solid fa-sort-down"></i>
+                    </div>
+                </div>
+                <div onClick={() => go('/Dropdown1/community')} className="ProfileEditRow">
+                    <b>Community</b><br />
+                    <div className='CustomSelect leftright'>
+                        <span> {uDdata.com}</span>
                         <i class="fa-solid fa-sort-down"></i>
                     </div>
                 </div>
@@ -105,14 +168,14 @@ export default function ProfileInfo() {
                     <div onClick={() => go('/Dropdown2/Tower')} className="nopaddTop ProfileEditRow">
                         <b>Tower / Block</b><br />
                         <div style={{ width: '100%' }} className='CustomSelect leftright'>
-                            <span> TOWER 2</span>
+                            <span> {uDdata.tow}</span>
                             <i class="fa-solid fa-sort-down"></i>
                         </div>
                     </div>
                     <div onClick={() => go('/Dropdown2/Flat or House')} className="ProfileEditRow">
                         <b>Flat/ House no.</b><br />
                         <div style={{ width: '100%' }} className='CustomSelect leftright'>
-                            <span> 5</span>
+                            <span>{uDdata.flat}</span>
                             <i class="fa-solid fa-sort-down"></i>
                         </div>
 

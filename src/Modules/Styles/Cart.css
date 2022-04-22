@@ -119,9 +119,10 @@
 
 .CPCRName {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    word-wrap: break-word;
 }
 
 .CartRproduct .CPCR {
@@ -130,4 +131,149 @@
 
 .CartRproduct img {
     height: 150px !important
+}
+
+.CPTitemTop img {
+    height: 80px;
+    width: 80px;
+}
+
+
+
+
+
+
+.card {
+    width: 150px;
+    margin: 5vw;
+    height: 180px;
+    overflow-y: clip;
+}
+
+.card__image.loading,
+.card__image img {
+    height: 150px;
+    width: 150px;
+}
+
+.loading {
+    position: relative;
+    background-color: #e2e2e2;
+}
+
+.loading:after {
+    display: block;
+    content: "";
+    position: absolute;
+    height: 340px;
+    width: 180px;
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    background: linear-gradient(90deg, transparent, hsla(0, 0%, 100%, .2), transparent);
+    -webkit-animation: loading .4s infinite;
+    animation: loading .4s infinite;
+}
+
+.card__title.loading {
+    height: 1rem;
+    margin: 1rem 0 1rem 0;
+    border-radius: 3px;
+}
+
+.card__title {
+    padding: 8px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+
+@keyframes loading {
+    to {
+        -webkit-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+
+.EssentialsCardContianer .card,
+.ProductsPage2 .card {
+    height: 30px;
+    width: calc(100% - 40px)
+}
+
+.EssentialsCardContianer .card .card__image,
+.ProductsPage2 .card .card__image {
+    display: none
+}
+
+.CouponSearchBar {
+    display: grid;
+    grid-template-columns: auto 90px;
+    padding: 15px;
+    background-color: rgba(232, 232, 232, 0.439);
+}
+
+.CouponPage {
+    background-color: rgba(232, 232, 232, 0.439);
+}
+
+.CouponSearch {
+    padding: 10px;
+    font-size: 14px;
+    /* width: calc(100% - 20px); */
+    border: 1px solid rgba(227, 227, 227, 0.96);
+    border-radius: 5px;
+}
+
+.CouponBut {
+    margin-left: 10px;
+    width: 80px;
+    background-color: rgba(76, 173, 144, 1);
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+
+.CouponCard .PCoff {
+    margin-bottom: 0;
+    padding: 5px;
+    font-size: 14px;
+}
+
+.CouponCardDesc {
+    text-align: initial;
+    font-size: 16px;
+    color: rgb(50, 59, 76);
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: white;
+    padding-bottom: 10px;
+    /* padding-bottom: 5px; */
+    /* margin-bottom: 5px;
+    border-bottom: 1px solid rgba(102, 102, 102, 0.204); */
+}
+
+.CouponCard {
+    margin-top: 5px;
+}
+
+.CouponCard .greentext {
+    color: rgba(76, 173, 144, 1)
+}
+
+.CouponCard .leftright {
+    padding-top: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    background-color: white;
+}
+
+.CouponCardNote {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 3px;
+    padding-top: 10px;
+    text-align: initial;
+    background-color: white;
+    color: rgba(50, 59, 76, 0.585);
+    padding-bottom: 10px;
 }

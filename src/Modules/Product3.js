@@ -1,25 +1,40 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { getCartData } from '../Apis globals/cartAPI'
+import { getHomeViewall } from '../Apis globals/CartRecommend'
+import { RecommendedCall } from '../Apis globals/HomepageApi'
+import { getPopularProducts } from '../Apis globals/popularProducts'
 import ProductLongCard from './CommonComponents/ProductLongCard'
 import Top from './CommonComponents/Top'
 import ScrollTop from './ScrollTop'
-export default function Products3() {
-    const [productCardData, setCartData] = useState([
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: true, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: true, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: true, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-        { isInCart: false, img: '/Images/corn.png', brand: 'SURF EXCEL', incart: 2, name: 'Excel Matic Frontload Det Liquid', quantity: '500 ML', price: '120' },
-    ])
+export default function Products3(prop) {
+    const [productCardData, setCartData] = useState([])
+    let masterCart = getCartData()
     const labels = [
-        'Fresh Vegetables', 'Milk & curd', 'Herbs & Flowers', 'Fresh Fruits', 'Salt, Sugar & Jaggery'
+        // 'Fresh Vegetables', 'Milk & curd', 'Herbs & Flowers', 'Fresh Fruits', 'Salt, Sugar & Jaggery'
     ]
     let name = decodeURIComponent(window.location.href.split('/').pop())
+    useEffect(() => {
+        getHomeViewall(name == 'SALE' ? 'sale' : name == 'Popular in your society' ? 'pop' : 'rec').then(e => {
+            let temp = []
+            console.log(e)
+            for (let i of e) {
+                temp.push({
+                    isInCart: masterCart[i._id] != undefined ? true : false,
+                    img: i.image,
+                    brand: i.brand,
+                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                    name: i.name,
+                    quantity: i.unit,
+                    price: i.price,
+                    off: i.priceDiscount,
+                    cprice: i.priceDiscounted,
+                    id: i._id
+                })
+            }
+            console.log(temp)
+            setCartData([...temp])
+        })
+    }, [])
     return (
         <div className='ProductsPage2'>
             <Top head={name} />
@@ -29,9 +44,15 @@ export default function Products3() {
                     return <div className="PI2 product3PI2">{label}</div>
                 })}
             </div>
-            {productCardData.map((item, index) => {
-                return <ProductLongCard Odata={productCardData} setData={setCartData} index={index} data={item} />
-            })}
+            {productCardData.length > 0 ? productCardData.map((item, index) => {
+                return <ProductLongCard setItems={prop.setItems} setPrice={prop.setPrice} Odata={productCardData} setData={setCartData} index={index} data={item} />
+            }) : Array.from(Array(9).keys()).map((item) => (
+                <div class="card">
+                    <div class="card__image loading"></div>
+                    <div class="card__title loading"></div>
+                    <div class="card__description loading"></div>
+                </div>
+            ))}
             <div style={{ height: 100, backgroundColor: 'rgba(232, 232, 232, 0.439)' }} className=""></div>
             <ScrollTop />
         </div>

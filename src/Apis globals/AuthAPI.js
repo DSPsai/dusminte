@@ -5,17 +5,30 @@ export const Authentication = async () => {
     method: "post",
     url: `${process.env.REACT_APP_API_URL1}`,
     data: {
-      "operation": "userLoginAdmin",
-      "params":
-      {
-        "email": "admin@dusminute.com",
-        "password": "aDm1n@nk202!",
-        "deviceToken": ""
+      "operation": "userLoginMobile",
+      "params": {
+        "mobile": "6303125378"
       }
     },
   }).then(async response => {
-    localStorage.setItem("access", response.data.data.token)
+    localStorage.setItem("access", response.data.data.userData.token)
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_API_URL1}`,
+      data: {
+        "operation": "userDetail",
+        "params": {
+          "userId": response.data.data.user._id
+        }
+      },
+    }).then(async response => {
+      // localStorage.setItem("access", response.data.data.userData.token)
+      localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
+      return response.data.data.user
+    }).catch(e => {
+      console.log(e) })
     localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
     return response.data.data.user
-  }).catch(e => { })
+  }).catch(e => { 
+    console.log(e)})
 }
