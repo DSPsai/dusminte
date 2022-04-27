@@ -171,6 +171,7 @@ export default function Profile(props) {
           temp2.total = i.order.amountTotal
           temp2.isDelivered = i.order.isDelivered
           temp2.isCancelled = i.order.isCancelled
+          temp2.Ddate = i.order.cancelledAt == undefined ? i.order.orderCompleteStamp : i.order.cancelledAt
           console.log(i.order)
           temp2._id = i.order._id
           temp2.Rew = "0"
@@ -187,9 +188,15 @@ export default function Profile(props) {
     })
   }
   const LeftRight = (data) => {
-    return <div className="row">
-      <span>{data.dat.name + " (" + data.dat.capacity + ") " + data.dat.quantity} </span>
-      <span>{data.dat.price}</span>
+    return <div style={{ marginBottom: '10px' }} className="row">
+      <div style={{ textAlign: 'initial' }} className="column">
+        <span>{data.dat.name}</span>
+        <span>{data.dat.capacity}</span>
+      </div>
+      <span>x{data.dat.quantity}</span>
+      <span>Rs. {data.dat.price}</span>
+      {/* <span>{data.dat.name + " (" + data.dat.capacity + ") " + data.dat.quantity} </span>
+      <span>{data.dat.price}</span> */}
     </div>
   }
   // const OrderData = (dat) => {
@@ -274,6 +281,7 @@ export default function Profile(props) {
     localStorage.removeItem('tower')
     localStorage.removeItem('flat')
     document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
+    document.getElementById('loadme').style.display = 'none'
     SuData({ ...JSON.parse(localStorage.getItem('UserData')) })
     getOrders().then(or => {
       // setOdata([...or])
@@ -323,57 +331,102 @@ export default function Profile(props) {
   const [load, setLoad] = useState(false)
   const OrderTemplate = (dat) => {
     let date = new Date(dat.data.Pdate)
+    let date2 = new Date(dat.data.Ddate)
     const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var hours = date2.getHours();
+    var minutes = date2.getMinutes();
+    // Check whether AM or PM
+    var newformat = hours >= 12 ? 'PM' : 'AM';
+    // Find current hour in AM-PM Format
+    hours = hours % 12;
+    // To display "0" as "12"
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
     return <div className="OrderCard">
       <div className="OPC1 row">
         <i class="fa-solid fa-briefcase"></i>
         <div className="OPC11 column">
           <div className=""><b>Order ID {dat.data.id}</b></div>
-          <div className="OPDates">placed {date.getDate() + " " + month[date.getMonth()] + " " + date.getFullYear()}</div>
         </div>
         <div className="column">
           <div className={dat.data.isCancelled ? "redtext" : "greentext"}>{dat.data.status}</div>
-          <div className="OPDates OPC12">{dat.data.Ddate}</div>
         </div>
       </div>
+      <div style={{ fontSize: '14px', justifyContent: 'space-between', textAlign: 'initial' }} className="row">
+        <div className="">Placed on <br />{date.getDate() + " " + month[date.getMonth()] + " " + date.getFullYear()}</div>
+        <div style={{ textAlign: 'end' }} className="">on {date2.getDate() + " " +
+          month[date2.getMonth()]}
+          <br />{
+            hours + ":" + minutes + " " + newformat}</div>
+      </div>
       <hr />
-      <br />
       {dat.data.expand ?
-        <div className="OPCRows">
+        <div style={{ paddingTop: '5px' }} className="OPCRows">
           {dat.data.data.map(item => {
             return <LeftRight dat={item} />
           })}
-          <div className="row">
+          <div style={{ marginBottom: '10px' }} className="row">
             <span><b>Subtotal</b> </span>
             {/* <span><b>{dat.data.subtotal}</b></span> */}
-            <span><b>{dat.data.totP}</b></span>
+            <span><b><i class="fa-solid fa-indian-rupee-sign"></i> {dat.data.totP}</b></span>
           </div>
-          <div className="row">
+          <div style={{ marginBottom: '10px' }} className="row">
             <span>Discount </span>
-            <span><div className="greentext">-{dat.data.totP - dat.data.subtotal}</div></span>
+            <span><div className="greentext"><i class="fa-solid fa-indian-rupee-sign"></i> -{dat.data.totP - dat.data.subtotal}</div></span>
           </div>
-          <div className="row">
+          <div style={{ marginBottom: '10px' }} className="row">
             <span>Delivery fee </span>
-            <span>{dat.data.deliveryFee}</span>
+            <span><b><i class="fa-solid fa-indian-rupee-sign"></i> {dat.data.deliveryFee}</b></span>
           </div>
-          <div className="row">
+          <div style={{ marginBottom: '10px' }} className="row">
             <span><b>Total</b> </span>
-            <span><b>{dat.data.subtotal}</b></span>
+            <span><b><i class="fa-solid fa-indian-rupee-sign"></i> {dat.data.subtotal}</b></span>
           </div>
-          <div style={{ marginLeft: '-20px', marginRight: '-20px', padding: '20px', paddingTop: '10px', paddingBottom: '10px', backgroundColor: 'rgba(244, 244, 244, 1)' }} className="row">
+          {/* <div style={{ marginLeft: '-20px', marginRight: '-20px', padding: '20px', paddingTop: '10px', paddingBottom: '10px', backgroundColor: 'rgba(244, 244, 244, 1)' }} className="row">
             <span style={{ opacity: '0.8' }}> <b>Reward Points Used</b> </span>
             <span>{dat.data.Rew}</span>
-          </div>
-          <div style={{ marginBottom: '-10px', marginTop: '10px' }} className="row">
+          </div> */}
+          <div style={{ marginBottom: '10px', marginTop: '10px' }} className="row">
             <span className='greentext'> <b>Need Help?</b> </span>
             <span
               onClick={() => { dat.data.isCancelled || dat.data.isDelivered ? reOrder(dat.data.data) : cancel(dat.data._id); console.log(dat.data) }}
               style={{ color: dat.data.isDelivered ? 'orange' : 'red' }}>{!dat.data.isDelivered ? dat.data.isCancelled ? "Re-Order" : "Cancel Order" : "Re-Order"}</span>
           </div>
+          <div className="">
+            <span
+              onClick={() => {
+                let temp = OrderDatas;
+                temp[dat.index].expand = false;
+                console.log([...temp])
+                setOdata([...temp])
+              }}
+              style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }}><i style={{ color: 'red', fontSize: '20px' }} class="fa-solid fa-circle-minus"></i>
+              &emsp;View Less
+            </span>
+          </div>
         </div >
         :
-        <div className="row POrderItems">
-          <span>{
+        <div style={{ textAlign: 'initial' }} className=" POrderItems">
+          <div style={{ width: '100%', padding: 0 }} className="leftright">
+            <span className="">
+              Total items : {dat.data.data.length}
+            </span>
+            <span className="">
+              Rs. {dat.data.total}
+            </span>
+          </div>
+          <span
+            onClick={() => {
+              let temp = OrderDatas;
+              temp[dat.index].expand = true;
+              console.log([...temp])
+              setOdata([...temp])
+            }}
+            style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}><i style={{ color: 'green', fontSize: '20px' }} class="fa-solid fa-circle-plus"></i>
+            &emsp;View Details
+          </span>
+
+          {/* <span>{
             dat.data.data.slice(0, 4).map((i, ind) => {
               return i.name + " ( " + i.capacity + " ) x" + i.quantity + `${ind != dat.data.data.length - 1 ? " , " : ""}`
             })
@@ -388,7 +441,7 @@ export default function Profile(props) {
           }} className="greentext">
               <u>see more</u>
             </div>
-          </span>
+          </span> */}
           <span><b>{dat.data.payment}</b></span>
         </div>
       }

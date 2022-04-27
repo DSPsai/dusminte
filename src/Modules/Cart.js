@@ -220,16 +220,20 @@ export default function Cart(prop) {
             let car = masterCart;
             console.log(oos)
             for (let i in masterCart)
-                if (oos[i] == undefined) {
+                if (masterCart[i].name != undefined && oos[i] == undefined) {
                     delete car[i]
                     bol = true
+                    console.log(oos[i], i)
                 }
             if (bol) {
                 let total = 0
+                let count = 0
                 for (let i in car) {
                     try {
-                        if (car[i].cprice != undefined || car[i].cprice != null)
+                        if (car[i].cprice != undefined || car[i].cprice != null) {
                             total = (car[i].cprice * car[i].quantity) + total
+                            count += 1
+                        }
                         console.log(i)
                     } catch (e) {
                         console.log(e)
@@ -245,7 +249,7 @@ export default function Cart(prop) {
                     progress: undefined,
                 });
                 car.totalPrice = total
-                car.totalItems = car.length - 2
+                car.totalItems = count
                 localStorage.setItem('CartData', JSON.stringify(car))
             }
             console.log(e)

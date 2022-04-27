@@ -146,6 +146,28 @@
     animation-iteration-count: infinite;
 }
 
+.OrderCard:first-child {
+    margin-top: 0;
+}
+
+* {
+
+    word-wrap: break-word;
+
+}
+
+.OPCRows .row .column {
+    width: 100%;
+}
+
+.OPCRows .row span:nth-child(3n) {
+    width: 100%
+}
+
+.OPCRows .row span:nth-child(3) {
+    text-align: end;
+}
+
 /* .OrderPlacedAnimF {
     animation-name: OrderPlacedAnim;
     animation-duration: 1s;

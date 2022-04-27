@@ -142,13 +142,24 @@ export default function ProductLongCard(props) {
                                 change(false)
                             }} class="fa-solid fa-minus"></i>
                             <span>{props.data.incart}</span>
-                            <i style={{ backgroundColor: dis ? 'white' : '' }} onClick={() => {
+                            <i style={{ borderRadius: '0 10px 10px 0', backgroundColor: (props.data.incart + 1) > props.data.stock ? '#bbd7cf' : '' }} onClick={() => {
                                 console.log(props.data.incart, props.data.stock)
                                 if ((props.data.incart + 1) <= props.data.stock) {
                                     change(true)
                                     setDis(false)
-                                } else
+
+                                } else {
                                     setDis(true)
+                                    toast.error(`Stock available only ${props.data.stock}`, {
+                                        position: "top-center",
+                                        autoClose: 1000,
+                                        hideProgressBar: true,
+                                        closeOnClick: true,
+                                        pauseOnHover: false,
+                                        draggable: true,
+                                        progress: undefined,
+                                    });
+                                }
                             }} class="fa-solid fa-plus"></i>
                         </div>
                     </> : <button onClick={() => addToCart()} className='ProductAdd'>Add</button>}
