@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { PhotoProvider, PhotoView } from 'react-photo-view';
+import { toast } from 'react-toastify';
 import { getCartData, setCartData } from '../../Apis globals/cartAPI';
 export default function ProductLongCard(props) {
     const addToCart = () => {
@@ -32,6 +33,7 @@ export default function ProductLongCard(props) {
         props.setPrice(total)
         setCartData(e)
         props.setData([...temp])
+        if (props.setBol) props.setBol(!props.bol)
         if (props.setCitems) props.setCitems([...props.Cdata, props.data])
         console.log({ ...e }.length)
         // document.getElementById('cartItemNumber').innerText = e.length
@@ -41,6 +43,7 @@ export default function ProductLongCard(props) {
     const change = (sum) => {
         let temp = props.Odata;
         let cart = getCartData()
+        console.log(props.data.stock)
         if (!sum && temp[props.index].incart == 1) {
             temp[props.index].incart = 0;
             temp[props.index].isInCart = false
@@ -63,8 +66,21 @@ export default function ProductLongCard(props) {
             setCartData(cart)
         } else {
             if (sum) {
-                temp[props.index].incart = temp[props.index].incart + 1;
-                cart["" + props.data.id].quantity += 1
+                if ((temp[props.index].incart + 1) > props.data.stock) {
+                    if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
+                        toast.error(`Stock available only ${props.data.stock}`, {
+                            position: "top-center",
+                            autoClose: 1000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                } else {
+                    temp[props.index].incart = temp[props.index].incart + 1;
+                    cart["" + props.data.id].quantity += 1
+                }
             } else {
                 temp[props.index].incart = temp[props.index].incart - 1
                 cart["" + props.data.id].quantity -= 1
@@ -92,8 +108,10 @@ export default function ProductLongCard(props) {
         if (props.setCitems) {
             props.setCitems([...props.Cdata, props.data])
         }
+        if (props.setBol) props.setBol(!props.bol)
     }
     let masterCart = getCartData()
+    const [dis, setDis] = useState((props.data.incart + 1) > props.data.stock)
     return (
         <div className='CommonPC'>
             {/* <img src={props.data.img} alt="" /> */}
@@ -114,9 +132,24 @@ export default function ProductLongCard(props) {
                     </div>
                     {masterCart[props.data.id] != undefined && props.data.isInCart ? <>
                         <div className="PCBrow ProductAdd">
-                            <i onClick={() => change(false)} class="fa-solid fa-minus"></i>
+                            <i onClick={() => {
+                                console.log(props.data.incart, props.data.stock)
+                                if ((props.data.incart + 1) > props.data.stock) {
+                                    setDis(true)
+                                }
+                                else
+                                    setDis(false)
+                                change(false)
+                            }} class="fa-solid fa-minus"></i>
                             <span>{props.data.incart}</span>
-                            <i onClick={() => change(true)} class="fa-solid fa-plus"></i>
+                            <i style={{ backgroundColor: dis ? 'white' : '' }} onClick={() => {
+                                console.log(props.data.incart, props.data.stock)
+                                if ((props.data.incart + 1) <= props.data.stock) {
+                                    change(true)
+                                    setDis(false)
+                                } else
+                                    setDis(true)
+                            }} class="fa-solid fa-plus"></i>
                         </div>
                     </> : <button onClick={() => addToCart()} className='ProductAdd'>Add</button>}
                 </div>

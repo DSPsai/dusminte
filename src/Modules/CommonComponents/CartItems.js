@@ -51,7 +51,7 @@ export default function CartItems(props) {
                 <span id="cartItemNumber">{props.items}</span> Items | <i class="fa-solid fa-indian-rupee-sign"></i> <span id="cartItemPrice">{props.price}</span>
             </div>
             <div className="CartPopUpright">
-                <span> Select Payment</span> <i class="fa-solid fa-cart-shopping"></i>
+                <span>Go to Cart</span> <i class="fa-solid fa-cart-shopping"></i>
             </div>
         </div>
         </div>

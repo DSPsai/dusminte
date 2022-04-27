@@ -1,4 +1,5 @@
 import React from 'react'
+import { toast } from 'react-toastify';
 import { getCartData, setCartData } from '../../Apis globals/cartAPI';
 
 export default function CartCard(props) {
@@ -44,8 +45,21 @@ export default function CartCard(props) {
             pop()
         } else {
             if (sum) {
-                temp[props.index].incart = temp[props.index].incart + 1;
-                cart["" + props.data.id].quantity += 1
+                if ((temp[props.index].incart + 1) > props.data.stock) {
+                    if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
+                    toast.error(`Stock available only ${props.data.stock}`, {
+                        position: "top-center",
+                        autoClose: 2000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                    });
+                } else {
+                    temp[props.index].incart = temp[props.index].incart + 1;
+                    cart["" + props.data.id].quantity += 1
+                }
             } else {
                 temp[props.index].incart = temp[props.index].incart - 1
                 cart["" + props.data.id].quantity -= 1
@@ -113,7 +127,8 @@ export default function CartCard(props) {
             </div>
             <div className="row leftright">
                 <div className="redtext"><i class="fa-solid fa-indian-rupee-sign"></i> {props.data.cprice}
-                    &ensp;<s style={{ color: 'rgba(50, 59, 76,0.5)', fontSize: '12px' }}>{props.data.cprice == props.data.price ? "" : props.data.price}</s>
+                    &ensp;<s style={{ color: 'rgba(50, 59, 76,0.5)', fontSize: '12px' }}>{props.data.cprice == props.data.price ? "" : props.data.price}</s>&ensp;
+                    <span style={{ fontWeight: '500', opacity: props.data.off ? 1 : 0 }} className="PCoff"><i style={{ fontSize: '10px' }} class="fa-solid fa-indian-rupee-sign"></i> {props.data.off} OFF</span>
                 </div>
 
                 <div className="PCBrow ProductAdd">

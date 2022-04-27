@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { getCoupons } from '../../Apis globals/cartAPI'
 export default function Coupons() {
     const go = useNavigate()
@@ -11,12 +12,24 @@ export default function Coupons() {
     }, [])
     const [data, setData] = useState([])
     const CouponCard = (dat) => {
-        return <div className="CouponCard">
+        return <div style={{ opacity: dat.dat.isActive ? 1 : 0.5 }} className="CouponCard">
             <div className="leftright">
                 <div className="PCoff">{dat.dat.couponName}</div>
                 <div onClick={() => {
-                    localStorage.setItem('coupon', dat.dat.couponName)
-                    go(-1)
+                    if (dat.dat.isActive) {
+                        localStorage.setItem('coupon', dat.dat.couponName)
+                        go(-1)
+                    } else {
+                        toast.error(`Minimum Cart Value is ${dat.dat.minimumValue}`, {
+                            position: "top-center",
+                            autoClose: 2000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                    }
                 }} className="greentext">Apply</div>
             </div>
             <div className="CouponCardDesc">{dat.dat.description}</div>

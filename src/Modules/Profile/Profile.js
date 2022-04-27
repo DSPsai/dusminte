@@ -290,6 +290,10 @@ export default function Profile(props) {
           SuData({ ...temp })
           setLoad(true)
         })
+        try {
+          let da = JSON.parse(localStorage.getItem('UserData'))
+          setLoc(da.communityId.name)
+        } catch (er) { setLoc('') }
       } else {
         setLoad(true)
       }
@@ -304,8 +308,16 @@ export default function Profile(props) {
         temp.communityId.address = e.communityId.address == undefined ? "" : e.communityId.address
         SuData({ ...temp })
         setLoad(true)
+        try {
+          let da = JSON.parse(localStorage.getItem('UserData'))
+          setLoc(da.communityId.name)
+        } catch (er) { setLoc('') }
       })
     };
+    try {
+      let da = JSON.parse(localStorage.getItem('UserData'))
+      setLoc(da.communityId.name)
+    } catch (er) { setLoc('') }
   }, [])
   const [uData, SuData] = useState({})
   const [load, setLoad] = useState(false)
@@ -410,11 +422,14 @@ export default function Profile(props) {
      */
     // console.log(dat)
   }
+  const [UserLoc, setLoc] = useState('')
   return (
     <div className='ProfileContainer'>
       <div className='HomeTop'>
         <span className='HomeTopLocation'><i class="fa-solid fa-location-dot"></i></span>
-        <span ><b style={{ fontSize: '18px' }} className='fontcolor'>Brigade Xanadu</b>&ensp;<i style={{ fontSize: '14px' }} onClick={() => history('/ProfileEdit')} class="fontcolor fa-solid fa-chevron-down"></i></span>
+        <span ><b style={{ fontSize: '18px' }} onClick={() => history('/ProfileEdit')}
+          className='fontcolor'>{UserLoc}</b>&ensp;
+        </span>
         <span style={{ textAlign: 'end' }}><i onClick={() => { history('/Profile'); document.getElementById('SearchBottom').style.top = '0' }} class="fontcolor fa-solid fa-magnifying-glass"></i></span>
       </div>
       <div style={{ marginTop: '60px' }} className="profileNameCard">

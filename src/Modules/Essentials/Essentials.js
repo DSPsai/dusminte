@@ -58,8 +58,13 @@ export default function Essentials() {
             setPadding('130px !important')
         else
             setPadding('170px !important')
+        try {
+            let da = JSON.parse(localStorage.getItem('UserData'))
+            setLoc(da.communityId.name)
+        } catch (er) { setLoc('') }
     }, [])
     const [currentClick, setCurrentClick] = useState(0)
+    const [UserLoc, setLoc] = useState('')
     const EssentialsCC = (dat) => {
         return <div style={{ height: dat.data.expand ? 'auto' : '33px' }} className="EssCC">
             <div onClick={(e) => {
@@ -87,10 +92,11 @@ export default function Essentials() {
         <div className='EssentialsPage'>
             <div className='HomeTop'>
                 <span className='HomeTopLocation'><i class="fa-solid fa-location-dot"></i></span>
-                <span ><b style={{ fontSize: '18px' }} className='fontcolor'>Brigade Xanadu</b>&ensp;<i style={{ fontSize: '14px' }} onClick={() => history('/ProfileEdit')} class="fontcolor fa-solid fa-chevron-down"></i></span>
+                <span ><b style={{ fontSize: '18px' }} onClick={() => history('/ProfileEdit')} className='fontcolor'>{UserLoc}</b>&ensp;
+                </span>
                 <span style={{ textAlign: 'end' }}><i onClick={() => { history('/Groceries'); document.getElementById('SearchBottom').style.top = '0' }} class="fontcolor fa-solid fa-magnifying-glass"></i></span>
             </div>
-            <div style={{ marginTop: '70px' }} className="">
+            <div style={{ paddingTop: '70px' }} className="">
                 <Slide arrows={false} easing="ease">
                     {images.map(er => {
                         return <div onClick={() => {

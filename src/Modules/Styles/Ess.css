@@ -7,6 +7,7 @@
 }
 
 .EssCC {
+    text-align: initial;
     background-color: white;
     overflow: hidden;
     transition: all 1s;
@@ -47,6 +48,7 @@
 }
 
 .EssIC {
+    text-align: center;
     width: calc(33% - 31.9px);
     display: inline-block;
     padding: 10px;

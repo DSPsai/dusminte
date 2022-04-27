@@ -6,6 +6,8 @@ export default function DM24() {
     }, [])
     return (
         <div>
-            <h3>Sorry, Looks like DM-24 is not active for your community <br />Coming Soon !</h3></div>
+            <h3>Sorry, Looks like DM-24 is not active for your community <br />Coming Soon !</h3>
+
+        </div>
     )
 }

@@ -27,6 +27,7 @@ export default function Products3(prop) {
                     quantity: i.unit,
                     price: i.price,
                     off: i.priceDiscount,
+                    stock: i.quantity,
                     cprice: i.priceDiscounted,
                     id: i._id
                 })

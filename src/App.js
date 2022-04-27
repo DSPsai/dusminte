@@ -56,11 +56,11 @@ function App() {
     <div className="App">
       {/* <div id="Transition"></div> */}
       <ToastContainer
-        position="bottom-center"
+        position="top-center"
         autoClose={false}
-        newestOnTop={false}
+        newestOnTop={true}
         closeOnClick
-        rtl={false}
+        rtl={true}
         pauseOnFocusLoss
         icon={false}
         draggable

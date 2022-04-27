@@ -58,6 +58,7 @@ export default function Products(prop) {
                     incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
                     name: i.name,
                     quantity: i.unit,
+                    stock: i.quantity,
                     price: i.price,
                     off: i.priceDiscount,
                     cprice: i.priceDiscounted,

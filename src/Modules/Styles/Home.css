@@ -2,7 +2,7 @@
 .HomeTop {
     width: calc(100% - 34px);
     display: grid;
-    grid-template-columns: 44px auto 40px;
+    grid-template-columns: 25px auto 40px;
     padding: 17px;
     font-size: 18px;
     position: fixed;
@@ -20,7 +20,7 @@
 }
 
 .HomeTopLocation i {
-    margin-left: 15px;
+    /* margin-left: 15px; */
 }
 
 .HomeTop .fa-location-dot {
