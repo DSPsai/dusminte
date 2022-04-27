@@ -1,19 +1,24 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 export default function Dropdown2() {
     let go = useNavigate()
     const url = decodeURIComponent(window.location.href.split('/').pop())
     const apiCall = async () => {
-        if (url == 'Tower')
+        let com = localStorage.getItem('community')
+        if (com == undefined) {
+            com = JSON.parse(localStorage.getItem('UserData')).communityId._id
+        }
+        if (url == 'Tower') {
             return await axios({
                 method: "post",
                 url: `${process.env.REACT_APP_API_URL1}`,
                 data: {
                     "operation": "tower",
                     "params": {
-                        "communityId": JSON.parse(localStorage.getItem('community'))[0].id
+                        "communityId": com
                     }
                 },
                 headers: {
@@ -21,26 +26,48 @@ export default function Dropdown2() {
                     'Accept': 'application/json'
                 },
             }).then(response => {
+                if (response.data.data.length == 0) {
+                    showNoData('No data Found')
+                }
                 return response.data.data
             }).catch(err => {
             })
-        else return await axios({
-            method: "post",
-            url: `${process.env.REACT_APP_API_URL1}`,
-            data: {
-                "operation": "flat",
-                "params": {
-                    "towerId": JSON.parse(localStorage.getItem('tower')).id
-                }
-            },
-            headers: {
-                'Authentication': `Bearer ${localStorage.getItem('access')}`,
-                'Accept': 'application/json'
-            },
-        }).then(response => {
-            return response.data.data
-        }).catch(err => {
-        })
+        } else {
+            if (localStorage.getItem('tower') == null)
+                showNoData('Select Tower First')
+            else
+                return await axios({
+                    method: "post",
+                    url: `${process.env.REACT_APP_API_URL1}`,
+                    data: {
+                        "operation": "flat",
+                        "params": {
+                            "towerId": JSON.parse(localStorage.getItem('tower')).id
+                        }
+                    },
+                    headers: {
+                        'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                        'Accept': 'application/json'
+                    },
+                }).then(response => {
+                    if (response.data.data.length == 0) {
+                        showNoData('No data Found')
+                    }
+                    return response.data.data
+                }).catch(err => {
+                })
+        }
+    }
+    const showNoData = (msg) => {
+        toast.error(msg, {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        });
     }
     useEffect(() => {
         document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'

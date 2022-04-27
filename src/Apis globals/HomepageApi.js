@@ -138,9 +138,21 @@ export const getSingleBanner = async (id) => {
                     'Accept': 'application/json'
                 },
             }).then(response => {
+                // let temp = []
+                // for (let i of response.data.data) {
+                //     temp.push({
+                //         url: i.image,
+                //         name: i.redirect.categoryId.name == undefined ? i.redirect.productId.parentCategory : i.redirect.categoryId.name
+
+                //     })
+                // }
                 let temp = []
                 for (let i of response.data.data) {
-                    temp.push({ url: i.image })
+                    try {
+                        temp.push({ url: i.image,isSingle:true ,to: i.redirect.categoryId.name, goUrl: i.redirect.url, screen: i.redirect.screen })
+                    } catch (e) {
+                        temp.push({ url: i.image,isSingle:false, to: i.redirect.productId.parentCategory, goUrl: i.redirect.url, screen: i.redirect.screen })
+                    }
                 }
                 singleBanner[id] = { images: temp }
                 return temp

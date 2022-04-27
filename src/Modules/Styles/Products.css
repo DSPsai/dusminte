@@ -33,6 +33,10 @@
     object-fit: contain;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 .CommonPC {
     display: grid;
     grid-template-columns: 140px auto;
@@ -42,12 +46,12 @@
 }
 
 .CommonPC img {
-    height: calc(100% - 41px);
+    height: calc(157px - 41px);
     width: calc(100% - 30px);
     border: 1.3px solid rgb(228, 244, 239);
     border-radius: 10px;
     margin: 10px;
-    object-fit: fill;
+    object-fit: contain;
     padding: 10px;
 }
 
@@ -136,10 +140,21 @@
 
 .commonHeading {
     font-weight: 600;
-    padding: 10px;
+    margin: 10px;
     font-size: 20px;
     text-align: initial;
-    color: #323B4C
+    color: #323B4C;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-wrap: break-word;
+    height: 25px;
+}
+
+.commonHeading:hover {
+    -webkit-line-clamp: 4;
+    overflow: scroll;
 }
 
 .CommonTop {

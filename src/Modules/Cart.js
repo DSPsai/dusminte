@@ -7,6 +7,7 @@ import CartCard from './CommonComponents/CartCard'
 import ProductLongCard from './CommonComponents/ProductLongCard'
 import './Styles/Cart.css'
 import { setCartData as setCart } from '../Apis globals/cartAPI'
+import { toast } from 'react-toastify'
 
 function loadScript(src) {
     return new Promise((resolve) => {
@@ -35,18 +36,60 @@ export default function Cart(prop) {
         }
         const options = {
             key: 'rzp_test_voMJUqe57ZpZjL',
-            amount: '100000',
+            amount: prices.toPay * 100,
             currency: 'INR',
             name: "name",
-            description: 'nothing but a fake money transfer',
+            description: `Order Id - ${orderId}`,
             image: 'http://localhost:3000/static/images/user-profile.png',
-            order_id: orderId,
-            handler: function (response) {
+            // order_id: orderId,
+            handler: async function (response) {
                 // var postdat = {
                 //     razorpay_payment_id: response.razorpay_payment_id,
                 //     razorpay_order_id: response.razorpay_order_id,
                 //     razorpay_signature: response.razorpay_signature
                 // }
+                document.getElementById('loadme').style.display = 'flex'
+                await axios({
+                    method: "post",
+                    url: `${process.env.REACT_APP_API_URL1}`,
+                    data: {
+                        "operation": "orderMakePayment",
+                        "params": {
+                            orderId: orderId,
+                            paymentType: 'online',
+                            onlinePaymentId: response.razorpay_payment_id
+                        }
+                    },
+                    headers: {
+                        'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                        'Accept': 'application/json'
+                    },
+                }).then(response => {
+                    // razorPay(response.data.data.id)
+                    if (response.data.data == null)
+                        toast.error('Order Not Placed', {
+                            position: "top-center",
+                            autoClose: 3000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: true,
+                            progress: undefined,
+                        });
+                    else {
+                        console.log(response)
+                        let temp = []
+                        for (let i of items) {
+                            temp.push({ name: i.name, unit: i.quantity, quantity: i.incart })
+                        }
+                        localStorage.setItem('OrderData', JSON.stringify(temp))
+                        document.getElementById('loadme').style.display = 'none'
+                        go('/OrderPlaced')
+                    }
+                }).catch(err => {
+                    document.getElementById('loadme').style.display = 'none'
+                    console.log(err)
+                })
                 console.log(response)
                 // axios.post(`${process.env.REACT_APP_API_URL1}/main/pay/success`, postdat, {
                 //     headers: {
@@ -89,6 +132,10 @@ export default function Cart(prop) {
     ])
     useEffect(() => {
         // localStorage.removeItem('coupon')
+        localStorage.removeItem("community")
+        localStorage.removeItem("location")
+        localStorage.removeItem('tower')
+        localStorage.removeItem('flat')
         let masterCart = getCartData()
         getRecommend().then(e => {
             let temp = []
@@ -109,15 +156,18 @@ export default function Cart(prop) {
             setCartData([...temp])
         })
         getCartItems().then(e => {
+            const weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+            const d = new Date();
+            let day = weekday[d.getDay()];
             let temp = []
             let calc = {}
             for (let i of e) {
                 calc[i._id] = {
-                    "product": { ...e },
+                    "product": { ...i },
                     "count": masterCart[i._id].quantity,
                     "purchasedQuantity": masterCart[i._id].quantity,
                     "frequency": 'daily',
-                    "frequencyDays": ['tuesday']
+                    "frequencyDays": [day]
                 }
                 temp.push({
                     isInCart: masterCart[i._id] != undefined ? true : false,
@@ -136,6 +186,7 @@ export default function Cart(prop) {
             setItems(temp)
             orderCalculation(calc)
         })
+        getED()
     }, [])
     const orderConfirm = async () => {
         let tot = 0
@@ -174,7 +225,80 @@ export default function Cart(prop) {
         await axios({
             method: "post",
             url: `${process.env.REACT_APP_API_URL1}`,
-            data: {
+            data:
+            // {
+            //     "operation": "orderCalculation",
+            //     "params": {
+            //     "cart": {
+            //     "orderType":"oneTime",
+            //     "items":{
+            //     "702298": {
+            //     "product": {
+            //     "_id": 702298,
+            //     "image": "https://dusminutefilestore.s3.ap-south-1.amazonaws.com/FinalImages/702298.jpg",
+            //     "gallery": [],
+            //     "canSubscribe": false,
+            //     "isFeatured": false,
+            //     "isPublished": true,
+            //     "isDeleted": false,
+            //     "isFraction": true,
+            //     "parentCategory": "FRUITS & VEGETABLES",
+            //     "category": "FRESH VEGETABLES",
+            //     "name": "ONION",
+            //     "slug": "onion",
+            //     "brand": "DM",
+            //     "description": "ONION",
+            //     "unit": "500 G",
+            //     "vendorId": "5c3f9a7bd22061002f0d31f4",
+            //     "sortEquation": 0.994623656,
+            //     "unitSellQuantity": 0.5,
+            //     "buyCount": 515,
+            //     "trueProduct": false,
+            //     "procurement": false,
+            //     "price": 45,
+            //     "priceDiscount": 0,
+            //     "priceDiscounted": 45,
+            //     "quantity": 5.401999999999999,
+            //     "productDetail": [
+            //     {
+            //     "storeId": 37,
+            //     "price": 45,
+            //     "discountPrice": 0,
+            //     "sellingPrice": 45
+            //     },
+            //     {
+            //     "storeId": 1024,
+            //     "price": 45,
+            //     "discountPrice": 0,
+            //     "sellingPrice": 45
+            //     }
+            //     ],
+            //     "totalAmount": 45
+            //     },
+            //     "purchasedQuantity": 1,
+            //     "count": 2,
+            //     "frequency": "daily",
+            //     "frequencyDays": [
+            //     "tuesday"
+            //     ]
+            //     }
+            //     },
+            //     "outOfStock":{
+            //     },
+            //     "countTotal":3,
+            //     "amountTotal":"378.00",
+            //     "amountTotalWeekly":0,
+            //     "deliveries":0,
+            //     "deliveryDates":[
+
+            //     ],
+            //     "deliveryCharges":0,
+            //     "couponDiscount":0,
+            //     "couponName":"DIWALI"
+            //     }
+            //     }
+            //     },
+            {
                 "operation": "orderCalculation",
                 "params": {
                     "cart": {
@@ -223,6 +347,78 @@ export default function Cart(prop) {
         toPay: masterCart.totalPrice,
     })
     let coupon = localStorage.getItem('coupon') == undefined ? null : localStorage.getItem('coupon')
+    const getED = async () => {
+        await axios({
+            method: "post",
+            url: `${process.env.REACT_APP_API_URL1}`,
+            data: {
+                "operation": "getOrderExpectedDelivery",
+                "params": {
+                    "orderTime": new Date(),
+                    "storeType": 1
+                }
+            },
+            headers: {
+                'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                'Accept': 'application/json'
+            },
+        }).then(response => {
+            // razorPay(response.data.data.id)
+            try {
+                let d = new Date(response.data.data)
+                console.log(d)
+                var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                d = d.getDate() + " " + days[d.getDay()] + " " + new Date(new Date(response.data.data).getTime() + 4 * 60 * 60 * 1000).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
+                setDate(d)
+            } catch (e) { console.log(e) }
+        }).catch(err => {
+            console.log(err)
+        })
+    }
+    const [date, setDate] = useState("")
+    const Udata = JSON.parse(localStorage.getItem('UserData'))
+    const updateData = () => {
+        document.getElementById('loadme').style.display = 'flex'
+        getCartItems().then(e => {
+            const weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+            const d = new Date();
+            let day = weekday[d.getDay()];
+            let temp = []
+            let calc = {}
+            for (let i of e) {
+                calc[i._id] = {
+                    "product": { ...i },
+                    "count": masterCart[i._id].quantity,
+                    "purchasedQuantity": masterCart[i._id].quantity,
+                    "frequency": 'daily',
+                    "frequencyDays": [day]
+                }
+                temp.push({
+                    isInCart: masterCart[i._id] != undefined ? true : false,
+                    img: i.image,
+                    brand: i.brand,
+                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                    name: i.name,
+                    quantity: i.unit,
+                    price: i.price,
+                    off: i.priceDiscount,
+                    cprice: i.priceDiscounted,
+                    id: i._id
+                })
+            }
+            console.log(e)
+            setItems(temp)
+            orderCalculation(calc)
+            document.getElementById('loadme').style.display = 'none'
+        })
+        getED()
+    }
+    const [bol, setBol] = useState(false)
+    useEffect(() => {
+        updateData()
+        if (items.length == 0)
+            go(-1)
+    }, [bol])
     return (
         <div className='cartPage'>
             <div className='CommonTop'>
@@ -230,18 +426,26 @@ export default function Cart(prop) {
                     <path fill-rule="evenodd" clip-rule="evenodd" d="M179.062 75.4981C179.062 74.2467 178.434 73.0464 177.314 72.1615C176.195 71.2766 174.677 70.7794 173.094 70.7794H32.3147L69.8821 41.089C70.437 40.6503 70.8772 40.1294 71.1775 39.5562C71.4779 38.983 71.6325 38.3686 71.6325 37.7481C71.6325 37.1277 71.4779 36.5133 71.1775 35.9401C70.8772 35.3669 70.437 34.846 69.8821 34.4073C69.3271 33.9685 68.6683 33.6205 67.9432 33.3831C67.2181 33.1456 66.441 33.0234 65.6562 33.0234C64.8714 33.0234 64.0942 33.1456 63.3691 33.3831C62.6441 33.6205 61.9852 33.9685 61.4303 34.4073L13.6803 72.1573C13.1245 72.5956 12.6834 73.1163 12.3825 73.6896C12.0816 74.2629 11.9268 74.8775 11.9268 75.4981C11.9268 76.1188 12.0816 76.7334 12.3825 77.3067C12.6834 77.88 13.1245 78.4007 13.6803 78.839L61.4303 116.589C61.9852 117.028 62.6441 117.376 63.3691 117.613C64.0942 117.851 64.8714 117.973 65.6562 117.973C66.441 117.973 67.2181 117.851 67.9432 117.613C68.6683 117.376 69.3271 117.028 69.8821 116.589C70.437 116.15 70.8772 115.629 71.1775 115.056C71.4779 114.483 71.6325 113.869 71.6325 113.248C71.6325 112.628 71.4779 112.013 71.1775 111.44C70.8772 110.867 70.437 110.346 69.8821 109.907L32.3147 80.2169H173.094C174.677 80.2169 176.195 79.7197 177.314 78.8348C178.434 77.9499 179.062 76.7496 179.062 75.4981Z" fill="black" fill-opacity="0.8" />
                 </svg>
                 <div className="commonHeading">Cart</div>
-                <span><i class="fa-solid fa-trash"></i></span>
+                {/* <span><i
+                    onClick={() => {
+                        setCart([])
+                        setItems([])
+                        setBol(!bol)
+                        go(-1)
+                        localStorage.removeItem('CartData')
+                    }}
+                    class="fa-solid fa-trash"></i></span> */}
             </div>
             <div className="CartPage">
                 <div className="leftright">
                     <b>Shipment 1 of 1</b>
                     <div className="greentext">
-                        Delivery by 10 Apr, 02:13 pm
+                        Delivery by {date}
                     </div>
                 </div>
             </div>
             {items.map((item, index) => {
-                return <CartCard setItems={prop.setItems} setPrice={prop.setPrice} index={index} Odata={items} setData={setItems} data={item} />
+                return <CartCard bol={bol} setBol={setBol} setItems={prop.setItems} setPrice={prop.setPrice} index={index} Odata={items} setData={setItems} data={item} />
             })}
             <div className="applycoupon row">
                 <div onClick={() => { go('/Coupon') }} style={{ whiteSpace: 'nowrap' }} className="">
@@ -253,11 +457,11 @@ export default function Cart(prop) {
             <div className="CartAddress">
                 <div style={{ paddingLeft: '0px' }} className="leftright">
                     <b>Address</b>
-                    <div className="greentext">Change</div>
+                    <div onClick={() => go('/ProfileEdit')} className="greentext">Change</div>
                 </div>
                 <div className="lightText">
-                    jay, 8140599075<br />
-                    C 1013,C1,ASSETZ 63 DEGREE EAST
+                    {Udata.name && Udata.name}, {Udata.mobile && Udata.mobile}<br />
+                    {Udata.communityId.name && Udata.communityId.name}, {Udata.communityId.address && Udata.communityId.address}
                 </div>
             </div>
             <div className="itemTotal">

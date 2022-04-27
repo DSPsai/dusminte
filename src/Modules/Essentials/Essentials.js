@@ -42,6 +42,11 @@ export default function Essentials() {
         })
     }
     useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        localStorage.removeItem("community")
+        localStorage.removeItem("location")
+        localStorage.removeItem('tower')
+        localStorage.removeItem('flat')
         document.getElementsByClassName('CartPopUthop')[0].style.display = 'block'
         document.getElementsByClassName('CartPopUthop')[0].style.bottom = 60;
         call()
@@ -49,6 +54,10 @@ export default function Essentials() {
             console.log(e)
             setImages([...e])
         })
+        if (document.getElementsByClassName('CartPopUthop')[0].style.opacity == 0)
+            setPadding('130px !important')
+        else
+            setPadding('170px !important')
     }, [])
     const [currentClick, setCurrentClick] = useState(0)
     const EssentialsCC = (dat) => {
@@ -72,6 +81,8 @@ export default function Essentials() {
             })}
         </div>
     }
+    const go = useNavigate()
+    const [padding, setPadding] = useState('130px !important')
     return (
         <div className='EssentialsPage'>
             <div className='HomeTop'>
@@ -81,19 +92,33 @@ export default function Essentials() {
             </div>
             <div style={{ marginTop: '70px' }} className="">
                 <Slide arrows={false} easing="ease">
-                    <div className="each-slide">
-                        <div style={{ 'backgroundImage': `url(${images[0].url})` }}>
-                            {/* <span>Slide 1</span> */}
+                    {images.map(er => {
+                        return <div onClick={() => {
+                            // localStorage.setItem('labels', JSON.stringify([]))
+                            // go(`/SingleProducts/${er.to.replaceAll("/", ".").replaceAll(" ", "-")}`)
+                            if (er.goUrl == "") {
+                                if (er.screen == "") {
+                                    localStorage.setItem('labels', JSON.stringify([]))
+                                    if (!er.isSingle) localStorage.setItem('isBanner', true)
+                                    go(`/SingleProducts/${er.to.replaceAll("/", ".").replaceAll(" ", "-")}`)
+                                } else {
+                                    go(`/Groceries`)
+                                }
+                            } else {
+                                window.location.href = er.goUrl
+                            }
+                        }} className="each-slide">
+                            <div style={{ 'backgroundImage': `url(${er.url})` }}>
+                                {/* <span>Slide 1</span> */}
+                            </div>
                         </div>
-                    </div>
-                    <div className="each-slide">
-                        <div style={{ 'backgroundImage': `url(${images[1].url})` }}>
-                            {/* <span>Slide 2</span> */}
-                        </div>
-                    </div>
+                    })}
                 </Slide>
             </div>
-            <div style={{ padding: '20px' }} className="EssentialsCardContianer">
+            <div style={{
+                padding: '20px',
+                paddingBottom: padding
+            }} className="EssentialsCardContianer">
                 <div style={{ fontSize: '22px' }} className="HeadText">Shop by category</div>
                 <br />
                 {data.length > 0 ? data.map((item, index) => {

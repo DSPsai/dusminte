@@ -30,6 +30,8 @@ import { getCartData } from './Apis globals/cartAPI';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Coupons from './Modules/Profile/Coupons';
+import LoadingAnim from './Modules/CommonComponents/LoadingAnim';
+import PlacesOrder from './Modules/CommonComponents/PlacesOrder';
 function App() {
   const [url, setUrl] = useState('')
   useEffect(() => {
@@ -46,26 +48,33 @@ function App() {
       setPrice(cart.totalPrice);
     })
   }
+  // useEffect(() => {
+  //   let last = document.getElementsByClassName('HomeSection3container')
+  //   last[last.length - 1].style.paddingBottom = 100
+  // }, [items])
   return (
     <div className="App">
       {/* <div id="Transition"></div> */}
-      {/* <ToastContainer
+      <ToastContainer
         position="bottom-center"
         autoClose={false}
         newestOnTop={false}
         closeOnClick
         rtl={false}
         pauseOnFocusLoss
+        icon={false}
         draggable
-      /> */}
+      />
+      <LoadingAnim />
       <BrowserRouter >
         <Routes>
           <Route exact path="/" element={<><Home setItems={setItems} setPrice={setPrice} /> <Every /></>} />
           <Route exact path="/Home" element={<><Home setItems={setItems} setPrice={setPrice} /> <Every /></>} />
           <Route exact path="/Search" element={<><Search setBottom={() => { }} bottom={'0vh'} /> <Every /></>} />
-          <Route exact path="/Profile" element={<><Profile /> <Every /></>} />
+          <Route exact path="/Profile" element={<><Profile setItems={setItems} setPrice={setPrice} /> <Every /></>} />
           <Route exact path="/ProfileEdit" element={<><ProfileInfo /> <Every /></>} />
-          <Route exact path="/Orders" element={<><Orders /> <Every /></>} />
+          <Route exact path="/OrderPlaced" element={<><PlacesOrder setItems={setItems} setPrice={setPrice} /> <Every /></>} />
+          <Route exact path="/Orders" element={<><Orders setItems={setItems} setPrice={setPrice} /> <Every /></>} />
           <Route exact path="/Groceries" element={<><Essentials /> <Every /></>} />
           <Route exact path="/Products/:id" element={<><Products setItems={setItems} setPrice={setPrice} /> <Every /></>} />
           <Route exact path="/Product3/:id" element={<><Products3 setItems={setItems} setPrice={setPrice} /> <Every /></>} />
@@ -82,7 +91,7 @@ function App() {
         </Routes>
         <CartItems items={items} price={price} />
       </BrowserRouter >
-      <Search />
+      <Search setItems={setItems} setPrice={setPrice} />
     </div >
   );
 }
@@ -166,18 +175,11 @@ incomplete frontend
 extra added 
   -> loading screens
   -> image full view
+
+
+
+  
 */
-
-
-
-
-
-
-
-
-
-
-
 
 
 

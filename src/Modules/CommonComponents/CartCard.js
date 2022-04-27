@@ -37,6 +37,7 @@ export default function CartCard(props) {
         // document.getElementsByClassName("CartPopUthop")[0].style.zIndex = 10
     }
     const change = (sum) => {
+        props.setBol(!props.bol)
         let temp = props.Odata;
         let cart = getCartData()
         if (!sum && temp[props.index].incart == 1) {
@@ -72,6 +73,7 @@ export default function CartCard(props) {
     }
     let masterCart = getCartData()
     function pop() {
+        props.setBol(!props.bol)
         let temp = props.Odata;
         let cart = getCartData()
         // temp[props.index].incart = 0;

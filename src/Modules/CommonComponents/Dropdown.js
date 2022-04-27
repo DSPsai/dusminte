@@ -3,10 +3,32 @@ import axios from 'axios'
 import { setCity } from '../../Apis globals/profileAPI'
 import { useNavigate } from 'react-router-dom'
 import { PhotoProvider, PhotoView } from 'react-photo-view'
+import { toast } from 'react-toastify'
 export default function Dropdown() {
     let location = window.location.href.split('/').pop()
     const [id, setLoc] = useState(localStorage.getItem('location'))
-    const apiCall = async () => {
+    const getCities = async () => {
+        if (cities.length == 0)
+            return await axios({
+                method: "post",
+                url: `${process.env.REACT_APP_API_URL1}`,
+                data: {
+                    "operation": "cityList"
+                },
+                headers: {
+                    'Authentication': `Bearer ${localStorage.getItem('access')}`,
+                    'Accept': 'application/json'
+                },
+            }).then(response => {
+                setCities(response.data.data)
+                return response.data.data
+            }).catch(err => {
+            })
+        else return cities
+    }
+    const [cities, setCities] = useState([])
+    const apiCall = async (loca) => {
+        console.log(loca)
         if (location != 'community')
             return await axios({
                 method: "post",
@@ -28,7 +50,7 @@ export default function Dropdown() {
             data: {
                 "operation": "communityByCityId",
                 "params": {
-                    "cityId": JSON.parse(localStorage.getItem('location'))[0].id
+                    "cityId": loca.cityId == undefined ? loca.id : loca.cityId
                 }
             },
             headers: {
@@ -36,31 +58,71 @@ export default function Dropdown() {
                 'Accept': 'application/json'
             },
         }).then(response => {
+            if (response.data.data.length == 0) {
+                showNoData()
+            }
             return response.data.data
         }).catch(err => {
         })
-
+    }
+    const showNoData = () => {
+        toast.error('No data Found', {
+            position: "top-center",
+            autoClose: 1000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: true,
+            progress: undefined,
+        });
     }
     useEffect(() => {
         document.getElementsByClassName('CartPopUthop')[0].style.display = 'none'
         // try {
         if (location == 'community') {
-            setLoc(JSON.parse(id)[0].id)
-            apiCall().then(er => {
-                // console.log(er)
-                let temp = []
-                for (let i of er) {
-                    temp.push({
-                        name: i.name.toLowerCase(), address: i.address, image: i.image, id: i.cityId
+            try {
+                console.log('intry')
+                // setLoc(JSON.parse(id)[0].id)
+                apiCall(JSON.parse(id)[0]).then(er => {
+                    console.log(er)
+                    let temp = []
+                    for (let i of er) {
+                        temp.push({
+                            name: i.name.toLowerCase(), address: i.address, image: i.image, id: i._id
+                        })
+                    }
+                    setData([...temp])
+                    setCity(temp)
+                })
+            }
+            catch (er) {
+                // setLoc(JSON.parse(localStorage.getItem('UserData')).communityId.cityId)
+                console.log('catch')
+                // localStorage.setItem('location', JSON.parse(localStorage.getItem('UserData')).communityId.cityId)
+                getCities().then(cit => {
+                    let tempc = []
+                    tempc = cit.filter(c => c.cityId == JSON.parse(localStorage.getItem('UserData')).communityId.cityId)
+                    console.log(tempc)
+                    setLoc(tempc[0].id)
+                    localStorage.setItem('location', JSON.stringify([{ name: tempc[0].cityName.toLowerCase(), id: tempc[0].cityId }]))
+                    apiCall(tempc[0]).then(er => {
+                        console.log(er)
+                        let temp = []
+                        for (let i of er) {
+                            temp.push({
+                                name: i.name.toLowerCase(), address: i.address, image: i.image, id: i._id
+                            })
+                        }
+                        setData([...temp])
+                        setCity(temp)
                     })
-                }
-                setData([...temp])
-                setCity(temp)
-            })
+                })
+            }
+
         }
         else
-            apiCall().then(er => {
-                // console.log(er)
+            apiCall(JSON.parse(id)[0]).then(er => {
+                console.log(er)
                 let temp = []
                 for (let i of er) {
                     temp.push({
@@ -141,7 +203,7 @@ export default function Dropdown() {
                             <img src={item.image} />
                         </PhotoView>
                     </PhotoProvider><div onClick={() => {
-                        let temp = data.filter(dat => dat.id == item.id)
+                        let temp = data.filter(dat => dat.id == item.cityId)
                         localStorage.setItem('community', JSON.stringify([temp]))
                         localStorage.removeItem('tower')
                         localStorage.removeItem('flat')
@@ -168,7 +230,7 @@ export default function Dropdown() {
                     go(-1)
                 }} className="dropdownitem">{item.name}</div>
             }) : data.map(item => {
-                console.log(item.name)
+                // console.log(item.name)
                 return <div className="dropdownitem row">
                     <PhotoProvider>
                         <PhotoView src={item.image} >

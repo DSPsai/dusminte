@@ -59,7 +59,7 @@ export default function Products(prop) {
                     name: i.name,
                     quantity: i.unit,
                     price: i.price,
-                    off:i.priceDiscount,
+                    off: i.priceDiscount,
                     cprice: i.priceDiscounted,
                     id: i._id
                 })
@@ -79,7 +79,19 @@ export default function Products(prop) {
             <Top head={url} />
             <Slide className='Pslider' arrows={false} easing="ease">
                 {images.map(er => {
-                    return <div className="each-slide">
+                    return <div onClick={() => {
+                        if (er.goUrl == "") {
+                            if (er.screen == "") {
+                                localStorage.setItem('labels', JSON.stringify([]))
+                                if (!er.isSingle) localStorage.setItem('isBanner', true)
+                                go(`/SingleProducts/${er.to.replaceAll("/", ".").replaceAll(" ", "-")}`)
+                            } else {
+                                go(`/Groceries`)
+                            }
+                        } else {
+                            window.location.href = er.goUrl
+                        }
+                    }} className="each-slide">
                         <div style={{ 'backgroundImage': `url(${er.url})` }}>
                             {/* <span>Slide 1</span> */}
                         </div>

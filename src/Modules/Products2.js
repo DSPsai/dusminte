@@ -5,6 +5,7 @@ import ScrollTop from './ScrollTop'
 import { getSingleData } from '../Apis globals/SingleProductsAPI'
 import { getCartData } from '../Apis globals/cartAPI'
 import { useNavigate } from 'react-router-dom'
+import { getPopularProducts } from '../Apis globals/popularProducts'
 export default function Products2(prop) {
     let url = decodeURIComponent(window.location.href.split('/').pop().replaceAll(".", "/").replaceAll("-", " "))
     const [productCardData, setCartData] = useState([])
@@ -12,25 +13,50 @@ export default function Products2(prop) {
     let masterCart = getCartData()
     const call = () => {
         url = decodeURIComponent(window.location.href.split('/').pop().replaceAll(".", "/").replaceAll("-", " "))
-        getSingleData(url).then(e => {
-            let temp = []
-            for (let i of e) {
-                temp.push({
-                    isInCart: masterCart[i._id] != undefined ? true : false,
-                    img: i.image,
-                    brand: i.brand,
-                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
-                    name: i.name,
-                    quantity: i.unit,
-                    price: i.price,
-                    off:i.priceDiscount,
-                    cprice: i.priceDiscounted,
-                    id: i._id
-                })
-            }
-            console.log(temp)
-            setCartData([...temp])
-        })
+        if (localStorage.getItem('isBanner')) {
+            getPopularProducts(url.toUpperCase()).then(e => {
+                let temp = []
+                for (let i of e) {
+                    temp.push({
+                        isInCart: masterCart[i._id] != undefined ? true : false,
+                        img: i.image,
+                        brand: i.brand,
+                        incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                        name: i.name,
+                        quantity: i.unit,
+                        price: i.price,
+                        off: i.priceDiscount,
+                        cprice: i.priceDiscounted,
+                        id: i._id
+                    })
+                }
+                console.log(temp)
+                setCartData([...temp])
+            })
+            localStorage.removeItem('isBanner')
+        }
+        else {
+            getSingleData(url).then(e => {
+                let temp = []
+                for (let i of e) {
+                    temp.push({
+                        isInCart: masterCart[i._id] != undefined ? true : false,
+                        img: i.image,
+                        brand: i.brand,
+                        incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                        name: i.name,
+                        quantity: i.unit,
+                        price: i.price,
+                        off: i.priceDiscount,
+                        cprice: i.priceDiscounted,
+                        id: i._id
+                    })
+                }
+                console.log(temp)
+                setCartData([...temp])
+            })
+
+        }
     }
     useEffect(() => {
         console.log('trigger')

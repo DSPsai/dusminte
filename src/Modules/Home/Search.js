@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
+import { getCartData } from '../../Apis globals/cartAPI';
 import { RecommendedCall } from '../../Apis globals/HomepageApi';
 import ProductLongCard from '../CommonComponents/ProductLongCard';
 import '../Styles/Search.css'
@@ -12,6 +13,7 @@ export default function Search(props) {
         }
         return <>{temp}</>
     }
+    let masterCart = getCartData()
     const searchMe = async (e) => {
         setLoad(true)
         let val = e
@@ -42,13 +44,16 @@ export default function Search(props) {
                     temp2.push(i.description.toLocaleLowerCase().split(value))
                     console.log(i.description.toLocaleLowerCase().split(value))
                     tempa.push({
-                        isInCart: false,
+                        isInCart: masterCart[i._id] != undefined ? true : false,
                         img: i.image,
                         brand: i.brand,
-                        incart: 0,
+                        incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
                         name: i.name,
                         quantity: i.unit,
-                        price: i.price
+                        price: i.price,
+                        off: i.priceDiscount,
+                        cprice: i.priceDiscounted,
+                        id: i._id
                     })
                 }
                 setData([...temp2])
@@ -69,12 +74,30 @@ export default function Search(props) {
             //         img: i.image
             //     })
             // }
-            setsCards([...e])
+            console.log("searchPopular", e)
+            let temp1 = e;
+            let tempa = []
+            for (let i of temp1) {
+                tempa.push({
+                    isInCart: masterCart[i._id] != undefined ? true : false,
+                    img: i.image,
+                    brand: i.brand,
+                    incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
+                    name: i.name,
+                    quantity: i.unit,
+                    price: i.price,
+                    off: i.priceDiscount,
+                    cprice: i.priceDiscounted,
+                    id: i._id
+                })
+            }
+            setsCards([...tempa])
         })
     }
     const [value, setValue] = useState("")
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
+            setShowp(false)
             console.log(value)
             searchMe(value)
             setPc(-1)
@@ -129,13 +152,13 @@ export default function Search(props) {
     const [tData, setTdata] = useState([])
     const [tData1, setTdata1] = useState([])
     useEffect(() => {
-        let temp = tData1;
+        let temp = showP ? [...searchCards] : tData1;
         let temper = temp.splice(pC, 1)
         temp.splice(0, 0, ...temper)
         setTdata(temp)
         console.log(temp)
     }, [pC])
-    const [showP,setShowp]=useState(false)
+    const [showP, setShowp] = useState(false)
     return (
         <div
             //  style={{ top: props.bottom }}
@@ -148,18 +171,23 @@ export default function Search(props) {
                         setValue(e.target.value)
                     }} placeholder='Search for any product or service' />
                 </div>
-                <span style={{ marginLeft: '15px', fontSize: '11px' }} onClick={() => document.getElementById('SearchBottom').style.top = '100vh'} className='BackButton'>
+                <span style={{ marginLeft: '15px', fontSize: '11px' }} onClick={() => {
+                    document.getElementById('SearchBottom').style.top = '100vh'
+
+                    setShowp(false)
+                }} className='BackButton'>
                     <i class="fa-solid fa-xmark"></i>
                 </span>
             </div>
             {/* <div style={{ marginTop: '60px' }} className=""></div> */}
-            {value.length > 0 ? <>
-                {value.length > 2 ? load ? <i class="fa-solid fa-group-arrows-rotate"></i> : <>
+            {value.length > 0 || showP ? <>
+                {value.length > 2 || showP ? load ? <i class="fa-solid fa-group-arrows-rotate"></i> : <>
                     <div style={{ marginLeft: '0px', padding: '10px' }} className='profileCardName'>Products</div>
                     <div className="ProductPageCards">
+                        {pC == -1 ? <div onClick={() => setPc(0)} className='SearchedItem leftright'><span>See all the products related to "{value}"</span><span><i class="fa-solid fa-up-right-from-square"></i></span></div> : <></>}
                         {pC == -1 ? data.map((e, indexer) => {
                             return <>
-                                <div onClick={() => setPc(0)} className='SearchedItem leftright'><span>See all the products related to "{value}"</span><span><i class="fa-solid fa-up-right-from-square"></i></span></div>
+
                                 <div onClick={() => {
                                     if (recent.indexOf(e.join(value) < 0)) {
                                         setRecent([...recent, e.join(value)])
@@ -172,7 +200,7 @@ export default function Search(props) {
                             </>
                         }) : <>
                             {tData.map((item, index) => {
-                                return <ProductLongCard Odata={tData} setData={setTdata} index={index} data={item} />
+                                return <ProductLongCard setItems={props.setItems} setPrice={props.setPrice} Odata={tData} setData={setTdata} index={index} data={item} />
                             })}
                         </>}</div></> : <><h3>Enter 3 characters</h3></>}
             </> : <>
@@ -194,13 +222,15 @@ export default function Search(props) {
                     Popular Essentials
                 </div>
                 <div className="SearchCardContainer">
-                    {searchCards.map(item => {
+                    {searchCards.map((item, ind) => {
                         return <div onClick={() => {
                             setTdata([...searchCards])
-
+                            setPc(ind)
+                            setShowp(true)
+                            setLoad(false)
                         }} className="SearchCard">
                             <div className="searchCardImg">
-                                <img src={item.image} />
+                                <img src={item.img} />
                             </div>
                             <div className="SearchCardTitle">{item.name}</div>
                         </div>

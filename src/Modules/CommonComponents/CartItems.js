@@ -27,6 +27,24 @@ export default function CartItems(props) {
     //     setPrice(cart.totalPrice);
 
     // }, [])
+    useEffect(() => {
+        try {
+            let last = document.getElementsByClassName('HomeSection3container')
+            if (props.items > 0) {
+                last[last.length - 1].style.paddingBottom = '100px'
+            } else {
+                last[last.length - 1].style.paddingBottom = '50px'
+            }
+        } catch (er) { console.log(er) }
+        // try {
+        //     let last = document.getElementsByClassName('EssentialsCardContianer')
+        //     if (props.items > 0) {
+        //         last[last.length - 1].style.paddingBottom = '170px'
+        //     } else {
+        //         last[last.length - 1].style.paddingBottom = '130px'
+        //     }
+        // } catch (er) { console.log(er) }
+    }, [props.items])
     return (
         <><div style={{ zIndex: props.items > 0 ? 10 : -1, opacity: props.items > 0 ? 1 : 0, bottom: loc == 'MyCart' || loca.search(/Product/) >= 0 || loc == 'Recommendations' ? 0 : 65 }} onClick={() => go('/MyCart')} className="CartPopUthop"><div className='CartPopUp'>
             <div className="CartPopUpleft">

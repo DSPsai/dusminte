@@ -2,7 +2,7 @@
 .HomeTop {
     width: calc(100% - 34px);
     display: grid;
-    grid-template-columns: 76px auto 40px;
+    grid-template-columns: 44px auto 40px;
     padding: 17px;
     font-size: 18px;
     position: fixed;
