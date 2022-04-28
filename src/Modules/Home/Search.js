@@ -50,6 +50,7 @@ export default function Search(props) {
                         incart: masterCart[i._id] != undefined ? masterCart[i._id].quantity : 0,
                         name: i.name,
                         quantity: i.unit,
+                        stock: i.quantity,
                         price: i.price,
                         off: i.priceDiscount,
                         cprice: i.priceDiscounted,
@@ -86,6 +87,7 @@ export default function Search(props) {
                     name: i.name,
                     quantity: i.unit,
                     price: i.price,
+                    stock: i.quantity,
                     off: i.priceDiscount,
                     cprice: i.priceDiscounted,
                     id: i._id

@@ -143,10 +143,41 @@ export default function Home(props) {
       </div>
       {
         data.data.isInCart ? <>
-          <div className="PCBrow ProductAdd">
-            <i onClick={() => change(false)} class="fa-solid fa-minus"></i>
+          <div style={{ marginTop: 5, marginBottom: 5, padding: '0px !important' }} className="PCBrow ProductAdd">
+            <i onClick={() => {
+              console.log(data.data.incart, data.data.stock)
+              if ((data.data.incart + 1) > data.data.stock) {
+                // setDis(true)
+              }
+              else {
+                // setDis(false)
+              }
+              change(false)
+            }} class="fa-solid fa-minus"></i>
             <span>{data.data.incart}</span>
-            <i onClick={() => change(true)} class="fa-solid fa-plus"></i>
+            <i style={{
+              borderRadius: '0 10px 10px 0',
+              backgroundColor: (data.data.incart + 1) > data.data.stock ? '#bbd7cf' : ''
+            }}
+              onClick={() => {
+                console.log(data.data.incart, data.data.stock)
+                if ((data.data.incart + 1) <= data.data.stock) {
+                  change(true)
+                  // setDis(false)
+
+                } else {
+                  // setDis(true)
+                  toast.error(`Stock available only ${data.data.stock}`, {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    draggable: true,
+                    progress: undefined,
+                  });
+                }
+              }} class="fa-solid fa-plus"></i>
           </div>
         </> : <button onClick={() => addToCart()} className='ProductAdd'>Add</button>
       }
