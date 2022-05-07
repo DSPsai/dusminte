@@ -32,7 +32,7 @@ export default function Essentials() {
             for (let i of e) {
                 let temp2 = []
                 for (let j of i.subCategories) {
-                    let temp3 = { name: j.name.toLowerCase(), img: j.image }
+                    let temp3 = { name: j.name, img: j.image }
                     temp2.push(temp3)
                 }
                 temp1.push({ name: i.category.name, data: temp2, expand: false })
@@ -68,23 +68,30 @@ export default function Essentials() {
     const EssentialsCC = (dat) => {
         return <div style={{ height: dat.data.expand ? 'auto' : '33px' }} className="EssCC">
             <div onClick={(e) => {
-                let temp = data;
+                let temp = [];
                 // if (temp[dat.index].expand)
                 //     e.target.style.transform = 'rotate(0deg)';
                 // else
                 //     e.target.style.transform = 'rotate(180deg)';
                 setCurrentClick(dat.index)
-                temp[dat.index].expand = !temp[dat.index].expand
+                for (let i of data) {
+                    let temp2 = { ...i }
+                    temp2.expand = false
+                    temp.push(temp2)
+                }
+                temp[dat.index].expand = !data[dat.index].expand
                 console.log(temp[dat.index].expand)
                 setData([...temp])
             }} className="row">
                 <div className="HeadText">{dat.data.name}</div>
                 <i style={{ display: 'flex', alignItems: 'center', transform: !data[dat.index].expand ? 'rotate(0deg)' : 'rotate(180deg)' }} class="fa-solid fa-angle-down"></i>
             </div>
-            {dat.data.data.map((item, indexer) => {
-                return <EssInnerC index={dat.index} data={item} expand={currentClick == dat.index ? dat.data.expand : false} />
-            })}
-        </div>
+            {
+                dat.data.data.map((item, indexer) => {
+                    return <EssInnerC index={dat.index} data={item} expand={currentClick == dat.index ? dat.data.expand : false} />
+                })
+            }
+        </div >
     }
     const go = useNavigate()
     const [padding, setPadding] = useState('130px !important')
@@ -123,10 +130,11 @@ export default function Essentials() {
             </div>
             <div style={{
                 padding: '20px',
+                paddingTop: '10px',
                 paddingBottom: padding
             }} className="EssentialsCardContianer">
-                <div style={{ fontSize: '22px' }} className="HeadText">Shop by category</div>
-                <br />
+                <div style={{ fontSize: '22px', marginBottom: '8px' }} className="HeadText">Shop by category</div>
+                {/* <br /> */}
                 {data.length > 0 ? data.map((item, index) => {
                     return <EssentialsCC index={index} data={item} />
                 }) : Array.from(Array(9).keys()).map((item) => (

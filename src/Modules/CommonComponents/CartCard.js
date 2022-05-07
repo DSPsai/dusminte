@@ -1,6 +1,6 @@
 import React from 'react'
 import { toast } from 'react-toastify';
-import { getCartData, setCartData } from '../../Apis globals/cartAPI';
+import { getCartData, getCartDataX, setCartData, setCartDataX } from '../../Apis globals/cartAPI';
 
 export default function CartCard(props) {
     const addToCart = () => {
@@ -47,15 +47,15 @@ export default function CartCard(props) {
             if (sum) {
                 if ((temp[props.index].incart + 1) > props.data.stock) {
                     if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
-                    toast.error(`Stock available only ${props.data.stock}`, {
-                        position: "top-center",
-                        autoClose: 2000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: true,
-                        progress: undefined,
-                    });
+                        toast.error(`Stock available only ${props.data.stock}`, {
+                            position: "top-center",
+                            autoClose: 2000,
+                            hideProgressBar: true,
+                            closeOnClick: true,
+                            pauseOnHover: false,
+                            draggable: true,
+                            progress: undefined,
+                        });
                 } else {
                     temp[props.index].incart = temp[props.index].incart + 1;
                     cart["" + props.data.id].quantity += 1
@@ -90,6 +90,13 @@ export default function CartCard(props) {
         props.setBol(!props.bol)
         let temp = props.Odata;
         let cart = getCartData()
+        getCartDataX().then(cd => {
+            let cdx = cd
+            delete cdx[props.data.id.toString()]
+            console.log(cdx)
+            console.log(props.data)
+            setCartDataX(cdx)
+        })
         // temp[props.index].incart = 0;
         // temp[props.index].isInCart = false
         cart.totalItems = cart.totalItems - 1
@@ -112,6 +119,7 @@ export default function CartCard(props) {
         let filter = temp.filter(item => props.data.id != item.id)
         console.log(filter)
         props.setData([...filter])
+        
     }
     return (
         <div className='CPTitem column'>
@@ -122,6 +130,9 @@ export default function CartCard(props) {
                         <i onClick={() => { pop() }} class="end fa-solid fa-xmark"></i>
                         <b>{props.data.name}</b>
                         <div className="lightText">{props.data.quantity}</div>
+                        <div
+                            style={{ color: 'red', fontWeight: '1000', textShadow: '1px 0 red', letterSpacing: '1px' }}
+                            className="">{props.isDisabled ? "Out of Stock" : ""}</div>
                     </div>
                 </div>
             </div>
@@ -131,7 +142,7 @@ export default function CartCard(props) {
                     <span style={{ fontWeight: '500', opacity: props.data.off ? 1 : 0 }} className="PCoff"><i style={{ fontSize: '10px' }} class="fa-solid fa-indian-rupee-sign"></i> {props.data.off} OFF</span>
                 </div>
 
-                <div className="PCBrow ProductAdd">
+                <div style={{ opacity: props.isDisabled ? 0.5 : 1 }} className="PCBrow ProductAdd">
                     <i onClick={() => change(false)} class="fa-solid fa-minus"></i>
                     <span>{props.data.incart}</span>
                     <i onClick={() => change(true)} class="fa-solid fa-plus"></i>

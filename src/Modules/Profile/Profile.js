@@ -113,6 +113,7 @@ export default function Profile(props) {
             temp2.total = i.order.amountTotal
             temp2.isDelivered = i.order.isDelivered
             temp2.isCancelled = i.order.isCancelled
+            temp2.Ddate = i.order.cancelledAt == undefined ? i.order.isDelivered == false ? i.order.cartrequest.deliveryDates : i.order.orderCompleteStamp : i.order.cancelledAt
             console.log(i.order)
             temp2._id = i.order._id
             temp2.Rew = "0"
@@ -146,7 +147,8 @@ export default function Profile(props) {
       },
     }).then(response => {
       let temp = []
-      for (let i of response.data.data) {
+      let temp2 = response.data.data.splice(0, 10)
+      for (let i of temp2) {
         let isServ = i.order == undefined
         if (!isServ) {
           let temp2 = {}
@@ -171,7 +173,7 @@ export default function Profile(props) {
           temp2.total = i.order.amountTotal
           temp2.isDelivered = i.order.isDelivered
           temp2.isCancelled = i.order.isCancelled
-          temp2.Ddate = i.order.cancelledAt == undefined ? i.order.orderCompleteStamp : i.order.cancelledAt
+          temp2.Ddate = i.order.cancelledAt == undefined ? i.order.isDelivered == false ? i.order.cartrequest.deliveryDates : i.order.orderCompleteStamp : i.order.cancelledAt
           console.log(i.order)
           temp2._id = i.order._id
           temp2.Rew = "0"
@@ -274,7 +276,7 @@ export default function Profile(props) {
   //     <div className="backgroundgrey"></div>
   //   </>
   // }
-  const [showOrders, setShowOrders] = useState(false)
+  const [showOrders, setShowOrders] = useState(true)
   useEffect(() => {
     localStorage.removeItem("community")
     localStorage.removeItem("location")
@@ -354,10 +356,15 @@ export default function Profile(props) {
       </div>
       <div style={{ fontSize: '14px', justifyContent: 'space-between', textAlign: 'initial' }} className="row">
         <div className="">Placed on <br />{date.getDate() + " " + month[date.getMonth()] + " " + date.getFullYear()}</div>
-        <div style={{ textAlign: 'end' }} className="">on {date2.getDate() + " " +
-          month[date2.getMonth()]}
-          <br />{
-            hours + ":" + minutes + " " + newformat}</div>
+        <div style={{ textAlign: 'end' }} className="">{dat.data.status == 'Ordered' ? "Expected Delivery on" : 'Cancelled at'} <br />{
+          dat.data.status == 'Ordered' ? dat.data.Ddate : <> {date2.getDate() + " " +
+            month[date2.getMonth()]}
+            {
+              " " + hours + ":" + minutes + " " + newformat}
+          </>
+        }
+
+        </div>
       </div>
       <hr />
       {dat.data.expand ?
@@ -387,7 +394,7 @@ export default function Profile(props) {
             <span>{dat.data.Rew}</span>
           </div> */}
           <div style={{ marginBottom: '10px', marginTop: '10px' }} className="row">
-            <span className='greentext'> <b>Need Help?</b> </span>
+            <span onClick={() => go('/Help/Query')} className='greentext'> <b>Need Help?</b> </span>
             <span
               onClick={() => { dat.data.isCancelled || dat.data.isDelivered ? reOrder(dat.data.data) : cancel(dat.data._id); console.log(dat.data) }}
               style={{ color: dat.data.isDelivered ? 'orange' : 'red' }}>{!dat.data.isDelivered ? dat.data.isCancelled ? "Re-Order" : "Cancel Order" : "Re-Order"}</span>
@@ -415,6 +422,15 @@ export default function Profile(props) {
               Rs. {dat.data.total}
             </span>
           </div>
+          <div style={{ marginBottom: '10px', marginTop: '10px', paddingLeft: 0, paddingRight: 0 }} className="leftright">
+            <span onClick={() => {
+              localStorage.setItem('QueryOid', dat.data._id)
+              go('/Help/Query')
+            }} style={{ color: 'rgba(76, 173, 144, 1)' }} className=''> <b>Need Help?</b> </span>
+            <span
+              onClick={() => { dat.data.isCancelled || dat.data.isDelivered ? reOrder(dat.data.data) : cancel(dat.data._id); console.log(dat.data) }}
+              style={{ color: !dat.data.isDelivered ? 'orange' : 'red' }}>{!dat.data.isDelivered ? dat.data.isCancelled ? "Re-Order" : "Cancel Order" : "Re-Order"}</span>
+          </div>
           <span
             onClick={() => {
               let temp = OrderDatas;
@@ -425,7 +441,6 @@ export default function Profile(props) {
             style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}><i style={{ color: 'green', fontSize: '20px' }} class="fa-solid fa-circle-plus"></i>
             &emsp;View Details
           </span>
-
           {/* <span>{
             dat.data.data.slice(0, 4).map((i, ind) => {
               return i.name + " ( " + i.capacity + " ) x" + i.quantity + `${ind != dat.data.data.length - 1 ? " , " : ""}`
@@ -485,20 +500,21 @@ export default function Profile(props) {
         </span>
         <span style={{ textAlign: 'end' }}><i onClick={() => { history('/Profile'); document.getElementById('SearchBottom').style.top = '0' }} class="fontcolor fa-solid fa-magnifying-glass"></i></span>
       </div>
-      <div style={{ marginTop: '60px' }} className="profileNameCard">
-        <div className="profileName"><b>{load && uData.name}</b></div>
-        <div className="profileMail"> {load && uData.mobile} <i style={{ fontSize: '5px', margin: '0 5px' }} class="fa-solid fa-circle"></i> {load && uData.email}</div>
-      </div>
-      <div style={{ fontWeight: '500', fontSize: '16.5px' }} onClick={() => go('/ProfileEdit')} className="S3Right">
-        Edit
-      </div>
-      <div style={{ paddingTop: '0px' }} className="profileNameCard">
-        <div style={{ fontSize: '14px', marginTop: '-10px' }} className="profileName"><b>Address</b></div>
-        <div className="profileMail">
-          {load && uData.name + ", " + uData.mobile}<br />
-          {load && uData.communityId.name + ", " + uData.communityId.address}
+      {load && uData.name != undefined ?
+        <><div style={{ marginTop: '60px' }} className="profileNameCard">
+          <div className="profileName"><b>{load && uData.name}</b></div>
+          <div className="profileMail"> {load && uData.mobile} <i style={{ fontSize: '5px', margin: '0 5px' }} class="fa-solid fa-circle"></i> {load && uData.email}</div>
         </div>
-      </div>
+          <div style={{ fontWeight: '500', fontSize: '16.5px' }} onClick={() => go('/ProfileEdit')} className="S3Right">
+            Show
+          </div>
+          <div style={{ paddingTop: '0px' }} className="profileNameCard">
+            <div style={{ fontSize: '14px', marginTop: '-10px' }} className="profileName"><b>Address</b></div>
+            <div className="profileMail">
+              {load && uData.name + ", " + uData.mobile}<br />
+              {load && uData.communityId.name + ", " + uData.communityId.address}
+            </div>
+          </div></> : <h3 style={{ marginTop: '60px', color: '#323B4C' }}>Please update your profile in app</h3>}
       <div className="ProfileCard">
         <div className="ProfileCardIcon">
           <i class="fa-solid fa-comments"></i>
@@ -529,7 +545,7 @@ export default function Profile(props) {
           <i class="fa-solid fa-angle-right"></i>
         </div>
       </div>*/}
-      <div className="ProfileCard">
+      {/* <div className="ProfileCard">
         <div className="ProfileCardIcon">
           <i class="fa-solid fa-qrcode"></i>
         </div>
@@ -538,12 +554,12 @@ export default function Profile(props) {
           <div className="ProfileCardInfo">Here you'll see all DM 24x7 Orders</div>
         </div>
         <div className="ProfileCardLast row">
-          {/* <div className="S3Right">
+          <div className="S3Right">
             $234
-          </div> */}
+          </div>
           <i class="fa-solid fa-angle-right"></i>
         </div>
-      </div>
+      </div> */}
       <div style={{ fontSize: '19px', marginLeft: '20px', marginBottom: '14px', marginTop: '28px', textAlign: 'initial' }}>Orders</div>
       <div
         onClick={(e) => {
@@ -637,7 +653,7 @@ export default function Profile(props) {
           <i class="fa-solid fa-angle-right"></i>
         </div>
       </div>
-      <div style={{ borderBottom: 'none' }} className="ProfileCard">
+      {/* <div style={{ borderBottom: 'none' }} className="ProfileCard">
         <div className="ProfileCardIcon">
           <i style={{ color: 'red' }} class="fa-solid fa-power-off"></i>
         </div>
@@ -656,12 +672,12 @@ export default function Profile(props) {
             style={{ color: 'red' }} className="profileCardName">Logout</div>
         </div>
         <div className="ProfileCardLast row">
-          {/* <div className="S3Right">
+          <div className="S3Right">
             01 Active
-          </div> */}
-          {/* <i class="fa-solid fa-angle-right"></i> */}
+          </div>
+          <i class="fa-solid fa-angle-right"></i>
         </div>
-      </div>
+      </div> */}
       {/* <Search setBottom={setSearch} bottom={search} /> */}
       <Bottom show='Profile' />
       <ScrollTop />

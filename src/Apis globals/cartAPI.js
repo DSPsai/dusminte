@@ -55,3 +55,22 @@ export const getCoupons = async () => {
     }).catch(err => {
     })
 }
+
+var cd = JSON.parse(localStorage.getItem('CartDataX'))
+export const getCartDataX = async () => {
+    if (cd.length == 0) {
+        localStorage.setItem('CartDataX', JSON.stringify({}))
+        return {}
+    } else {
+        return cd
+    }
+}
+export const setCartDataX = (dat) => {
+    if (cd == null)
+        cd = {}
+    if (dat.id != undefined) {
+        cd[dat.id] = dat
+    }
+    console.log(cd, dat)
+    localStorage.setItem('CartDataX', JSON.stringify(cd))
+}

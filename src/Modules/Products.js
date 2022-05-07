@@ -105,7 +105,7 @@ export default function Products(prop) {
                 })}
             </div>
             <div className="ProductPageCards EssentialsCardContianer">
-                <div style={{ marginLeft: '3px' }} className='commonHeading'>popular products in your society</div>
+                <div style={{paddingTop:'10px'}}  className='commonHeading'>Popular products in your society</div>
                 {/* {productCardData.map((item, index) => {
                     return <ProductLongCard Odata={productCardData} setData={setCartData} index={index} data={item} />
                 })} */}

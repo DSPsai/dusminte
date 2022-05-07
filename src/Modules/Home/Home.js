@@ -8,7 +8,7 @@ import { useHistory, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { getBanner, getHomePageData, getMasterBanner, RecommendedCall } from '../../Apis globals/HomepageApi';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { getCartData, setCartData } from '../../Apis globals/cartAPI';
+import { getCartData, getCartDataX, setCartData, setCartDataX } from '../../Apis globals/cartAPI';
 import { toast } from 'react-toastify';
 import { Authentication } from '../../Apis globals/AuthAPI';
 export default function Home(props) {
@@ -28,6 +28,7 @@ export default function Home(props) {
       temp[data.index].incart = 1
       let e = getCartData()
       let another = data.data.id.toString()
+      setCartDataX(data.data)
       // let temper = {}
       // temper = 
       e[another] = { name: data.data.id.toString(), cprice: data.data.cprice, quantity: 1 }
@@ -60,6 +61,13 @@ export default function Home(props) {
       let temp = data.Odata;
       let cart = getCartData()
       if (!sum && temp[data.index].incart == 1) {
+        getCartDataX().then(cd => {
+          let cdx = cd
+          delete cdx[data.data.id.toString()]
+          console.log(cdx)
+          console.log(data.data)
+          setCartDataX(cdx)
+        })
         temp[data.index].incart = 0;
         temp[data.index].isInCart = false
         cart.totalItems = cart.totalItems - 1
@@ -167,15 +175,16 @@ export default function Home(props) {
 
                 } else {
                   // setDis(true)
-                  toast.error(`Stock available only ${data.data.stock}`, {
-                    position: "top-center",
-                    autoClose: 1000,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    draggable: true,
-                    progress: undefined,
-                  });
+                  if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
+                    toast.error(`Stock available only ${data.data.stock}`, {
+                      position: "top-center",
+                      autoClose: 1000,
+                      hideProgressBar: true,
+                      closeOnClick: true,
+                      pauseOnHover: false,
+                      draggable: true,
+                      progress: undefined,
+                    });
                 }
               }} class="fa-solid fa-plus"></i>
           </div>
@@ -223,7 +232,7 @@ export default function Home(props) {
   const [data, setData] = useState('')
   async function call() {
     async function callAuth() {
-      if (localStorage.getItem('UserData') == undefined) {
+      // if (localStorage.getItem('UserData') == undefined) {
         // console.log('one')
         return await axios({
           method: "post",
@@ -239,30 +248,31 @@ export default function Home(props) {
           localStorage.setItem("access", response.data.data.userData.token)
           // console.log('three')
           console.log(response.data)
-          return await axios({
-            method: "post",
-            url: `${process.env.REACT_APP_API_URL1}`,
-            data: {
-              "operation": "userDetail",
-              "params": {
-                "userId": response.data.data.userData.user._id
-              }
-            },
-            headers: {
-              'Authentication': `Bearer ${response.data.data.userData.token}`,
-              'Accept': 'application/json'
-            },
-          }).then(async response => {
-            console.log('executed')
-            // localStorage.setItem("access", response.data.data.userData.token)
-            localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
-            setUser({ ...response.data.data.user })
-            return response.data.data.user
-          }).catch(e => { })
+          if (response.data.data.userData.user._id != undefined)
+            return await axios({
+              method: "post",
+              url: `${process.env.REACT_APP_API_URL1}`,
+              data: {
+                "operation": "userDetail",
+                "params": {
+                  "userId": response.data.data.userData.user._id
+                }
+              },
+              headers: {
+                'Authentication': `Bearer ${response.data.data.userData.token}`,
+                'Accept': 'application/json'
+              },
+            }).then(async response => {
+              console.log('executed')
+              // localStorage.setItem("access", response.data.data.userData.token)
+              localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
+              setUser({ ...response.data.data.user })
+              return response.data.data.user
+            }).catch(e => { })
           // localStorage.setItem("UserData", JSON.stringify(response.data.data.user))
           // return response.data.data.user
         }).catch(e => { })
-      }
+      // }
     }
     await callAuth().then(async (er) => {
       console.log(er)

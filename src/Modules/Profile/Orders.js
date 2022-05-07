@@ -112,7 +112,7 @@ export default function Orders(props) {
                         temp2.total = i.order.amountTotal
                         temp2.isDelivered = i.order.isDelivered
                         temp2.isCancelled = i.order.isCancelled
-                        temp2.Ddate = i.order.cancelledAt == undefined ? i.order.orderCompleteStamp : i.order.cancelledAt
+                        temp2.Ddate = i.order.cancelledAt == undefined ? i.order.isDelivered == false ? i.order.cartrequest.deliveryDates : i.order.orderCompleteStamp : i.order.cancelledAt
                         console.log(i.order)
                         temp2._id = i.order._id
                         temp2.Rew = "0"
@@ -133,6 +133,7 @@ export default function Orders(props) {
         })
     }
     const OrderTemplate = (dat) => {
+        console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
         let date = new Date(dat.data.Pdate)
         let date2 = new Date(dat.data.Ddate)
         console.log(dat.data.Ddate)
@@ -168,10 +169,16 @@ export default function Orders(props) {
             </div>
             <div style={{ fontSize: '14px', justifyContent: 'space-between', textAlign: 'initial' }} className="row">
                 <div className="">Placed on <br />{date.getDate() + " " + month[date.getMonth()] + " " + hours2 + ":" + minutes2 + " " + newformat2}</div>
-                <div style={{ textAlign: 'end' }} className="">on {date2.getDate() + " " +
-                    month[date2.getMonth()]}
-                    <br />{
-                        hours + ":" + minutes + " " + newformat}</div>
+                <div style={{ textAlign: 'end' }} className="">{dat.data.status == 'Ordered' ? "Expected Delivery on" : 'Cancelled at'} <br />{
+                    dat.data.status == 'Ordered' ? dat.data.Ddate : <> {date2.getDate() + " " +
+                        month[date2.getMonth()]}
+                        {
+                            " " + hours + ":" + minutes + " " + newformat}
+                    </>
+                }
+
+                </div>
+
             </div>
             <hr />
             {dat.data.expand ?
@@ -201,7 +208,10 @@ export default function Orders(props) {
               <span>{dat.data.Rew}</span>
             </div> */}
                     <div style={{ marginBottom: '-10px', marginTop: '10px' }} className="row">
-                        <span className='greentext'> <b>Need Help?</b> </span>
+                        <span onClick={() => {
+                            localStorage.setItem('QueryOid', dat.data._id)
+                            go('/Help/Query')
+                        }} className='greentext'> <b>Need Help?</b> </span>
                         <span
                             onClick={() => { dat.data.isCancelled || dat.data.isDelivered ? reOrder(dat.data.data) : cancel(dat.data._id); console.log(dat.data) }}
                             style={{ color: dat.data.isDelivered ? 'orange' : 'red' }}>{!dat.data.isDelivered ? dat.data.isCancelled ? "Re-Order" : "Cancel Order" : "Re-Order"}</span>
@@ -447,7 +457,7 @@ export default function Orders(props) {
                     temp2.deliveryFee = i.order.cartrequest.deliveryCharges
                     temp2.total = i.order.amountTotal
                     temp2.isDelivered = i.order.isDelivered
-                    temp2.Ddate = i.order.cancelledAt == undefined ? i.order.orderCompleteStamp : i.order.cancelledAt
+                    temp2.Ddate = i.order.cancelledAt == undefined ? i.order.isDelivered == false ? i.order.cartrequest.deliveryDates : i.order.orderCompleteStamp : i.order.cancelledAt
                     temp2.isCancelled = i.order.isCancelled
                     console.log(i.order)
                     temp2._id = i.order._id
@@ -471,7 +481,10 @@ export default function Orders(props) {
         <div className='OrdersContainer'>
             <div className="ProfileInfoContainerTop">
                 <div className="row">
-                    <span onClick={() => go(-1)} style={{ margin: '20px' }} className='BackButton'><i class="fa-solid fa-left-long"></i></span>
+                    <svg onClick={() => { go(-1) }} style={{ margin: '20px' }} width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M17.25 7.96875H4.69969L10.4644 2.20406L9 0.75L0.75 9L9 17.25L10.4541 15.7959L4.69969 10.0312H17.25V7.96875Z" fill="#1D1D1D" />
+                    </svg>
+                    {/* <span onClick={() => go(-1)} className='BackButton'><i class="fa-solid fa-left-long"></i></span> */}
                     <span style={{ marginTop: '20px', marginBottom: '20px' }}>Orders</span>
                 </div>
             </div>

@@ -36,6 +36,7 @@ export const getRecommend = async () => {
 }
 */
 var aData = {}
+var labels = []
 export const getHomeViewall = async (cat) => {
     console.log(cat);
     console.log(aData[cat])
@@ -55,6 +56,11 @@ export const getHomeViewall = async (cat) => {
                 'Accept': 'application/json'
             },
         }).then(response => {
+            try {
+                for (let i of response.data.data.categories) {
+                    labels.push({ name: i.name, highLight: false })
+                }
+            } catch (er) { }
             aData[cat] = response.data.data.data
             return response.data.data.data
         }).catch(err => {
@@ -62,4 +68,7 @@ export const getHomeViewall = async (cat) => {
     } else {
         return aData[cat]
     }
+}
+export const getLabels = async () => {
+    return labels
 }

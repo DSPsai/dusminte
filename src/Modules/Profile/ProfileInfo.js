@@ -9,7 +9,7 @@ export default function ProfileInfo() {
     const Row = (dat) => {
         return <div className="ProfileEditRow">
             <b>{dat.data.name}</b><br />
-            <input disabled={dat.data.name == 'Mobile Number' ? true : false} onChange={(e) => { }} defaultValue={dat.data.value} type="text" placeholder={dat.data.value} />
+            <input disabled onChange={(e) => { }} defaultValue={dat.data.value} type="text" placeholder={dat.data.value} />
         </div>
     }
     const Rdata = [
@@ -253,15 +253,16 @@ export default function ProfileInfo() {
     })
     const [load, setLoad] = useState(false)
     const showNotEdit = () => {
-        toast.error('You can Edit your details through App', {
-            position: "top-center",
-            autoClose: 2000,
-            hideProgressBar: true,
-            closeOnClick: true,
-            pauseOnHover: false,
-            draggable: true,
-            progress: undefined,
-        });
+        if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
+            toast.error('You can Edit your details through App', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: false,
+                draggable: true,
+                progress: undefined,
+            });
     }
     return (
         <div className='ProfileInfoContainer'>
@@ -336,7 +337,7 @@ export default function ProfileInfo() {
 
                     </div>
                 </div>
-                <button onClick={() => { saveDetails() }} className='ProfileEditSave ProductAdd'>Save</button>
+                <button onClick={() => { go(-1) }} className='ProfileEditSave ProductAdd'>Back</button>
                 <center style={{ fontSize: '17px', opacity: '0.6', padding: '15px', paddingTop: '20px' }}>
                     *if you are unable to find your flat details, please write to us at support@dusminute.com
                 </center>

@@ -99,77 +99,8 @@ function App() {
 export default App;
 
 /*
-how to copy icons from invision?
-
-how to send auth user name and password in postman?
-whose that user and pass belongs  to? either company or a single user?
-if we send username and password with a api call, doesn't it make your app
- venerable to attackers?
-*/
-
-
-
-
-/*
-out of stock -> quantity case
-ordercalc api not working
-coupon apply not working
-
-
-
-
-
-
-completed
-- operation: "homeSectionByCommunityCityId"->Home page 6 cards
-- operation: "listProductByTags" -> 3 rows (recommendations,sales,popular)
-- operation: "categoryList" -> grocery page
-- operation: "productListByCategory" -> single grocery products (onclick on grocery item)
-- operation: "faqList" 
-- Home page banner api
-- Grocery page banner api
-- Home page card click -> page banner api
-- Search api
-
-  - 6 cards on click-> popular items data
-  - in stock or not api
-  - on edit -> get cities,ids api
-  {
-    "operation": "cityList"
-  }
-  - get user details api{
-    "operation": "userDetail",
-    "params":{
-        "userId":"5c3f9a7bd22061002f0d31f4"
-    }
-}
-
-incomplete
-- Home page 
-  - recommended->view all
-  - popular->view all
-  - sale->view all
-- user cart items checkout apis
-  - order calculation api
-  - coupon api (get and check apply)
-  - checkout api
-- profile 
-  - general queries api
-didn't tested yet
-- previously ordered api
-*/
-
-
-
-
-/*
 incomplete frontend
-  - no  products page -> top labels
   - help -> radio button
-  - search -> as it in app
-  - remove sections on home page->(according to data)
-  - filter popular products from "pop" tag api and show on home page onCardClick        
-  -- rest of them after api work
 */
 /*
 extra added 
@@ -177,8 +108,69 @@ extra added
   -> image full view
 
 
+-1.When clicking on fruits & vegetables, 
+  the heading inside the page has a spelling mistake. 
+  While it should take directly from front tile. 
+  Please check if this is not hard coded
+2.inside fruits & vegetables, UI mistake in “popular products”- 
+  no margin and it should start with the capital letter(same for other tiles)
+-3. Inside grocery Sub category are in capital letters but they are being edited 
+  as small letters eg> ground spices and masalas etc.
+-4. Inside grocery, if one category is expanded, other one should collapse
+-5. Also your UI is off. Margins between images / products and size of box is 
+   different than original UI
+6. Sale tile also as list of “subcategory” as filters. Those are absent
+7. DM 24*& UI is absent- header and footer should never disappears. Illustration missing
+8. Profile:
+  1.Please make the params you are getting from app as non editable- game. 
+    Mobile, city, community, and even flat and tower you would be getting from API
+  2.Check that all fields are compulsory in profile
+  3.Help centre integration is missing. 
+    I am unable to click on any of the option except FAQ
+3. UI is off. NO top margin is left here
+- 4. Hide DM 24*7 orders sections as there are none
+- 5. Orders need to be expanded by default.
+- 6.Under orders, Need help and reorder tab are visible on the first page itself- 
+  checked invasion for the same too
+- 7. Reorder is of orange colour
+- 8 In orders, need help is not working
+- 9.Disable Logout
+10- Delivery time is coming as NaN
+9. Cart:
+*- 1. Already shared the discount issue with you
+*- 2. Adding qty is not updating the cart
+*- 3. Even adding products from recommendation is not update the cart total. 
+  I believe you need to check this. 
+  In our UAT app this is not the problem
+*- 4 Not able to click on “apply coupon”
+*- 5. Not able to click on “proceed” and complete payment in the first go
+6. When it did happen, it didn’t take by phone and email 
+*- 7. Discount is double minus in some cases- sending you screenshot
 
-  
+
+
+
+
+    things to do:
+        - popular products top padding.
+        - Sale -> tags (filters).
+        - cart dont proceed unless profile is completed.
+        - cart out of stock section.
+    Queries:
+        for ankitha -
+            - DM 24/7 Illustration missing in figma and invision
+            - cant understand "UI is off. NO top margin is left here" 
+            - in app except faq and queries top two not working
+            - mentioned "Not able to click on “apply coupon”" but in 
+                api they are all coming 'isActive' as false
+            - cant understand "When it did happen, it didn’t take by phone 
+                and email" in cart payment
+        for kavya -
+            - Profile details completed or not - api
+            - in Profile details tower name and flat number not coming
+            - in "emailSupport" api body -> title value?
+            - Expected Delivery time cant find in "orderListByUser" api
+
 */
 
 

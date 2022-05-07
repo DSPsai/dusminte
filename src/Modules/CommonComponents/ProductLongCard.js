@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { toast } from 'react-toastify';
-import { getCartData, setCartData } from '../../Apis globals/cartAPI';
+import { getCartData, getCartDataX, setCartData, setCartDataX } from '../../Apis globals/cartAPI';
 export default function ProductLongCard(props) {
     const addToCart = () => {
         let temp = props.Odata;
@@ -11,7 +11,9 @@ export default function ProductLongCard(props) {
         let e = getCartData()
         let another = props.data.id.toString()
         // let temper = {}
-        // temper = 
+        // temper =
+        setCartDataX(props.data)
+        console.log(props.data)
         e[another] = { name: props.data.id.toString(), cprice: props.data.cprice, quantity: 1 }
         console.log(e, Object.keys(e).length)
         e.totalItems = Object.keys(e).length - 2
@@ -48,6 +50,13 @@ export default function ProductLongCard(props) {
             temp[props.index].incart = 0;
             temp[props.index].isInCart = false
             cart.totalItems = cart.totalItems - 1
+            getCartDataX().then(cd => {
+                let cdx = cd
+                delete cdx[props.data.id.toString()]
+                console.log(cdx)
+                console.log(props.data)
+                setCartDataX(cdx)
+            })
             delete cart[props.data.id.toString()];
             let total = 0
             for (let i in cart) {
@@ -150,15 +159,16 @@ export default function ProductLongCard(props) {
 
                                 } else {
                                     setDis(true)
-                                    toast.error(`Stock available only ${props.data.stock}`, {
-                                        position: "top-center",
-                                        autoClose: 1000,
-                                        hideProgressBar: true,
-                                        closeOnClick: true,
-                                        pauseOnHover: false,
-                                        draggable: true,
-                                        progress: undefined,
-                                    });
+                                    if (document.getElementsByClassName('Toastify')[0].getElementsByClassName('Toastify__toast').length <= 0)
+                                        toast.error(`Stock available only ${props.data.stock}`, {
+                                            position: "top-center",
+                                            autoClose: 1000,
+                                            hideProgressBar: true,
+                                            closeOnClick: true,
+                                            pauseOnHover: false,
+                                            draggable: true,
+                                            progress: undefined,
+                                        });
                                 }
                             }} class="fa-solid fa-plus"></i>
                         </div>
